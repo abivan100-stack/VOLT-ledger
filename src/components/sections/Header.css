@@ -1,0 +1,76 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule-2);
+}
+
+.header-bar {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+
+.header-logo-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--sun);
+  align-self: center;
+}
+
+/* No explicit color here on purpose: it inherits `--ink` from the global
+   `a` rule, and `--sun` from the global `a:hover` rule when the logo is
+   wrapped in a Link (Ledger page) — matching the original markup exactly. */
+.header-logo-word {
+  font-family: Archivo, sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: 0.14em;
+}
+
+.header-logo-suffix {
+  font-style: italic;
+  font-size: 21px;
+  color: var(--ink-soft);
+  margin-left: -1px;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.header-link {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+.header-link:hover {
+  color: var(--sun);
+}
+
+.header-rate {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.header-rate-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--settle);
+}

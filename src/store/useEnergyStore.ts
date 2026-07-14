@@ -1,0 +1,258 @@
+import { create } from 'zustand'
+import { formatClock } from '../lib/format'
+import { integrateGenerationAndConsumption, nextCommunityRate, tickHousehold } from '../lib/simulation'
+import { appendBlock, type ChainBlock } from '../lib/hashChain'
+
+export interface Household {
+  name: string
+  pv: number
+  base: number
+  balance: number
+  ph: number
+  orient: string
+  tilt: number
+  batt: number
+  since: string
+  meter: string
+  out: number
+  draw: number
+  net: number
+  gen: number
+  con: number
+  exp: number
+  imp: number
+  earned: number
+  spent: number
+  trades: number
+}
+
+interface SimulationConfig {
+  simSpeed: number
+  startHour: number
+  activity: number
+}
+
+interface EnergyStoreState {
+  config: SimulationConfig
+  initialized: boolean
+  running: boolean
+  simMinute: number
+  households: Household[]
+  chain: ChainBlock[]
+  nextBlockId: number
+  totalKwhToday: number
+  totalCreditToday: number
+  rate: number
+  prevRate: number
+  rateHistory: number[]
+
+  start: () => void
+  stop: () => void
+  tick: () => void
+  tryTrade: () => void
+}
+
+type HouseholdSeed = Omit<
+  Household,
+  'out' | 'draw' | 'net' | 'gen' | 'con' | 'exp' | 'imp' | 'earned' | 'spent' | 'trades'
+>
+
+// Ported verbatim from the original prototype's `this.houses` constructor data.
+const RAW_HOUSEHOLDS: HouseholdSeed[] = [
+  { name: 'Nikil Sundaram', pv: 4.2, base: 0.6, balance: 1240.4, ph: 0.3, orient: 'South-south-west', tilt: 12, batt: 5.0, since: '2021', meter: 'NB-0417' },
+  { name: 'Prem Ramesh', pv: 3.0, base: 0.5, balance: 312.75, ph: 1.7, orient: 'South', tilt: 10, batt: 0, since: '2022', meter: 'NB-1183' },
+  { name: 'Pranav P', pv: 5.4, base: 0.9, balance: 2105.1, ph: 2.9, orient: 'South', tilt: 15, batt: 10.0, since: '2020', meter: 'NB-0952' },
+  { name: 'Vijay', pv: 0, base: 0.7, balance: -484.2, ph: 4.1, orient: '—', tilt: 0, batt: 0, since: '—', meter: 'NB-2261' },
+  { name: 'Karthik Iyer', pv: 2.2, base: 0.4, balance: 96.3, ph: 5.3, orient: 'West', tilt: 12, batt: 0, since: '2023', meter: 'NB-1546' },
+  { name: 'Deepak Krishnan', pv: 3.6, base: 1.1, balance: -152.6, ph: 0.9, orient: 'South-east', tilt: 10, batt: 5.0, since: '2021', meter: 'NB-0788' },
+  { name: 'Sanjay Murugan', pv: 4.8, base: 0.8, balance: 878.05, ph: 2.2, orient: 'South', tilt: 14, batt: 7.5, since: '2022', meter: 'NB-0333' },
+  { name: 'Rahul Natarajan', pv: 0, base: 0.9, balance: -691.4, ph: 3.4, orient: '—', tilt: 0, batt: 0, since: '—', meter: 'NB-2490' },
+  { name: 'Aravind Chandran', pv: 2.8, base: 0.5, balance: 204.15, ph: 5.9, orient: 'South-south-east', tilt: 11, batt: 0, since: '2023', meter: 'NB-1902' },
+  { name: 'Surya Selvaraj', pv: 3.9, base: 1.0, balance: -58.9, ph: 1.1, orient: 'South-west', tilt: 13, batt: 5.0, since: '2022', meter: 'NB-0641' },
+]
+
+function createInitialHouseholds(): Household[] {
+  return RAW_HOUSEHOLDS.map((seed) => ({
+    ...seed,
+    out: 0,
+    draw: 0,
+    net: 0,
+    gen: 0,
+    con: 0,
+    exp: 0,
+    imp: 0,
+    earned: 0,
+    spent: 0,
+    trades: 0,
+  }))
+}
+
+// Ported verbatim from the original prototype's `seedChain` method.
+const SEED_OFFSETS_MINUTES = [42, 37, 32, 27, 22, 17, 12, 7, 3]
+const SEED_PAIRS: Array<[number, number]> = [
+  [2, 3], [0, 7], [6, 3], [8, 7], [2, 9], [4, 3], [9, 7], [0, 3], [6, 1],
+]
+
+function seedChain(
+  households: Household[],
+  startMinute: number,
+): { households: Household[]; chain: ChainBlock[]; nextBlockId: number } {
+  let nextHouseholds = households
+  let chain: ChainBlock[] = []
+  let nextBlockId = 1
+  for (let i = 0; i < SEED_OFFSETS_MINUTES.length; i++) {
+    const [fromIndex, toIndex] = SEED_PAIRS[i]
+    const from = nextHouseholds[fromIndex]
+    const to = nextHouseholds[toIndex]
+    const kwh = Math.round((0.3 + Math.random() * 1.1) * 100) / 100
+    const credit = Math.round(kwh * (5.3 + Math.random() * 0.5) * 100) / 100
+    nextHouseholds = nextHouseholds.map((h, index) => {
+      if (index === fromIndex) {
+        return { ...h, balance: h.balance + credit, exp: h.exp + kwh, earned: h.earned + credit, trades: h.trades + 1 }
+      }
+      if (index === toIndex) {
+        return { ...h, balance: h.balance - credit, imp: h.imp + kwh, spent: h.spent + credit, trades: h.trades + 1 }
+      }
+      return h
+    })
+    const block = appendBlock(
+      chain,
+      nextBlockId,
+      { t: formatClock(startMinute - SEED_OFFSETS_MINUTES[i]), from: from.name, to: to.name, kwh, credit },
+      0,
+    )
+    chain = [...chain, block]
+    nextBlockId += 1
+  }
+  return { households: nextHouseholds, chain, nextBlockId }
+}
+
+let tickHandle: ReturnType<typeof setInterval> | undefined
+let tradeHandle: ReturnType<typeof setInterval> | undefined
+
+export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
+  config: { simSpeed: 4, startHour: 8, activity: 1 },
+  initialized: false,
+  running: false,
+  simMinute: 8 * 60,
+  households: createInitialHouseholds(),
+  chain: [],
+  nextBlockId: 1,
+  totalKwhToday: 0,
+  totalCreditToday: 0,
+  rate: 5.5,
+  prevRate: 5.5,
+  rateHistory: new Array(44).fill(5.5),
+
+  start: () => {
+    const state = get()
+    if (!state.initialized) {
+      const startMinute = state.config.startHour * 60
+      const withDailyStats = state.households.map((h) => ({
+        ...h,
+        ...integrateGenerationAndConsumption(h.pv, h.base, startMinute),
+      }))
+      const seeded = seedChain(withDailyStats, startMinute)
+      set({
+        initialized: true,
+        simMinute: startMinute,
+        households: seeded.households,
+        chain: seeded.chain,
+        nextBlockId: seeded.nextBlockId,
+      })
+    }
+    if (!get().running) {
+      tickHandle = setInterval(() => get().tick(), 1000)
+      tradeHandle = setInterval(() => get().tryTrade(), 3200)
+      set({ running: true })
+    }
+  },
+
+  stop: () => {
+    if (tickHandle !== undefined) clearInterval(tickHandle)
+    if (tradeHandle !== undefined) clearInterval(tradeHandle)
+    tickHandle = undefined
+    tradeHandle = undefined
+    set({ running: false })
+  },
+
+  tick: () => {
+    const state = get()
+    const prevMinute = state.simMinute
+    let simMinute = prevMinute + 2 * state.config.simSpeed
+    let rolled = false
+    if (simMinute > 18.5 * 60) {
+      simMinute = 9 * 60
+      rolled = true
+    }
+    const dtHours = rolled ? 0 : (simMinute - prevMinute) / 60
+
+    let supply = 0
+    let demand = 0
+    let households = state.households.map((h) => {
+      const { out, draw, net } = tickHousehold(h.pv, h.base, h.ph, simMinute)
+      supply += Math.max(0, net)
+      demand += Math.max(0, -net)
+      return { ...h, out, draw, net, gen: h.gen + out * dtHours, con: h.con + draw * dtHours }
+    })
+
+    const rate = nextCommunityRate(state.rate, supply, demand)
+    const prevRate = state.rateHistory[state.rateHistory.length - 6] ?? state.rate
+    const rateHistory = [...state.rateHistory, rate].slice(-44)
+
+    let totalKwhToday = state.totalKwhToday
+    let totalCreditToday = state.totalCreditToday
+
+    if (rolled) {
+      households = households.map((h) => ({
+        ...h,
+        ...integrateGenerationAndConsumption(h.pv, h.base, simMinute),
+        exp: 0,
+        imp: 0,
+        earned: 0,
+        spent: 0,
+        trades: 0,
+      }))
+      totalKwhToday = 0
+      totalCreditToday = 0
+    }
+
+    set({ simMinute, households, rate, prevRate, rateHistory, totalKwhToday, totalCreditToday })
+  },
+
+  tryTrade: () => {
+    const state = get()
+    const exporters = state.households.filter((h) => h.net > 0.2)
+    const importers = state.households.filter((h) => h.net < -0.1)
+    if (!exporters.length || !importers.length) return
+    const from = exporters[Math.floor(Math.random() * exporters.length)]
+    const to = importers[Math.floor(Math.random() * importers.length)]
+    const kwh = Math.round(Math.min(0.25 + Math.random() * 1.15, Math.max(0.2, from.net)) * 100) / 100
+    const credit = Math.round(kwh * state.rate * 100) / 100
+
+    const households = state.households.map((h) => {
+      if (h === from) {
+        return { ...h, balance: h.balance + credit, exp: h.exp + kwh, earned: h.earned + credit, trades: h.trades + 1 }
+      }
+      if (h === to) {
+        return { ...h, balance: h.balance - credit, imp: h.imp + kwh, spent: h.spent + credit, trades: h.trades + 1 }
+      }
+      return h
+    })
+
+    const block = appendBlock(
+      state.chain,
+      state.nextBlockId,
+      { t: formatClock(state.simMinute), from: from.name, to: to.name, kwh, credit },
+      Date.now(),
+    )
+
+    set({
+      households,
+      chain: [...state.chain, block],
+      nextBlockId: state.nextBlockId + 1,
+      totalKwhToday: state.totalKwhToday + kwh,
+      totalCreditToday: state.totalCreditToday + credit,
+    })
+  },
+}))

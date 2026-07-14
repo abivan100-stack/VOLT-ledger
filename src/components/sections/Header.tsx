@@ -1,0 +1,54 @@
+import type { MouseEvent } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useEnergyStore } from '../../store/useEnergyStore'
+import './Header.css'
+
+function scrollToHowItWorks(event: MouseEvent<HTMLAnchorElement>) {
+  event.preventDefault()
+  const target = document.getElementById('how')
+  if (!target) return
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' })
+}
+
+function Header() {
+  const location = useLocation()
+  const isLedgerPage = location.pathname === '/ledger'
+  const rate = useEnergyStore((state) => state.rate)
+
+  const logo = (
+    <>
+      <span className="header-logo-dot" />
+      <span className="header-logo-word">VOLT</span>
+      <span className="serif header-logo-suffix">Ledger</span>
+    </>
+  )
+
+  return (
+    <header className="header">
+      <div className="container header-bar">
+        {isLedgerPage ? (
+          <Link to="/" className="header-logo">{logo}</Link>
+        ) : (
+          <div className="header-logo">{logo}</div>
+        )}
+        <nav className="header-nav">
+          {isLedgerPage ? (
+            <Link to="/" className="mono header-link">← HOME</Link>
+          ) : (
+            <>
+              <a href="#how" className="mono header-link" onClick={scrollToHowItWorks}>HOW IT WORKS</a>
+              <Link to="/ledger" className="mono header-link">LIVE LEDGER →</Link>
+            </>
+          )}
+          <span className="mono header-rate">
+            <span className="header-rate-dot" />
+            ₹{rate.toFixed(2)}/kWh
+          </span>
+        </nav>
+      </div>
+    </header>
+  )
+}
+
+export default Header
