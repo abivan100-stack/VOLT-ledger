@@ -1,0 +1,79 @@
+.how {
+  border-bottom: 1px solid var(--rule-2);
+  /* Anchor-scroll target for the "how it works" links in Header/Hero —
+     compensates for the sticky header instead of landing flush behind it. */
+  scroll-margin-top: var(--header-height);
+}
+
+.how-container {
+  padding-top: 128px;
+  padding-bottom: 128px;
+}
+
+.how-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.how-kicker-number {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--sun);
+}
+
+.how-heading {
+  font-size: clamp(32px, 4.4vw, 60px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  margin: 0 0 72px;
+  max-width: 14ch;
+}
+
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0;
+}
+
+.how-card {
+  border-left: 1px solid var(--rule-2);
+  padding: 6px 36px 6px 28px;
+}
+
+.how-card-delay-1 {
+  transition-delay: 60ms;
+}
+
+.how-card-delay-2 {
+  transition-delay: 120ms;
+}
+
+.how-card-number {
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 18px;
+}
+
+.how-card-number-sun {
+  color: var(--sun);
+}
+
+.how-card-number-settle {
+  color: var(--settle);
+}
+
+.how-card-title {
+  font-size: 27px;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+
+.how-card-body {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 36ch;
+}
