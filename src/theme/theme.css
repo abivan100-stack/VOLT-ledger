@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Global tokens + base styles, extracted verbatim from the original
+ * prototype's <style> block (legacy/Volt.dc.html + legacy/Ledger.dc.html).
+ * Mirrors src/theme/tokens.ts as CSS custom properties for hand-written
+ * component CSS that isn't expressed through Tailwind utilities.
+ */
+
+:root {
+  --paper: #F2EEE4;
+  --paper-2: #E9E2D2;
+  --card: #FCFAF3;
+  --ink: #17140F;
+  --ink-soft: #6B6454;
+  --rule: #DAD2BF;
+  --rule-2: #BEB49B;
+  --sun: #B26A12;
+  --settle: #245C43;
+  --void: #A31E17;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --container-max: 1200px;
+  --container-pad-x: 40px;
+  --header-height: 66px;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Archivo, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--sun);
+}
+
+em {
+  font-style: italic;
+}
+
+::selection {
+  background: var(--sun);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--sun);
+  outline-offset: 2px;
+}
+
+input,
+button {
+  font: inherit;
+}
+
+.mono {
+  font-family: 'Spline Sans Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.serif {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+}
+
+.eyebrow {
+  font-family: Archivo, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* Shared page-section wrapper: max-width:1200px, centered, 40px side padding — repeated identically across every section in both pages. */
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-left: var(--container-pad-x);
+  padding-right: var(--container-pad-x);
+  box-sizing: border-box;
+}
+
+/* Scroll-reveal system: components add [data-reveal], a shared IntersectionObserver adds .rv-in once. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.45s var(--ease-out), transform 0.45s var(--ease-out);
+}
+[data-reveal].rv-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  * {
+    animation: none !important;
+  }
+}
