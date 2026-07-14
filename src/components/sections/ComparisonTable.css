@@ -1,0 +1,84 @@
+.comparison {
+  border-bottom: 1px solid var(--rule-2);
+}
+
+.comparison-container {
+  padding-top: 128px;
+  padding-bottom: 128px;
+}
+
+.comparison-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.comparison-kicker-number {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--sun);
+}
+
+.comparison-heading {
+  font-size: clamp(32px, 4.4vw, 60px);
+  line-height: 1.03;
+  letter-spacing: -0.01em;
+  margin: 0 0 24px;
+  max-width: 14ch;
+}
+
+.comparison-intro {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin: 0 0 64px;
+  max-width: 62ch;
+}
+
+.comparison-table {
+  border-top: 1.5px solid var(--ink);
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) 1fr 1fr;
+  gap: 24px;
+}
+
+.comparison-header-row {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule-2);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+}
+
+.comparison-header-volt {
+  color: var(--ink);
+}
+
+.comparison-data-row {
+  padding: 26px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.comparison-row-label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  padding-top: 2px;
+}
+
+.comparison-row-label-accent {
+  color: var(--sun);
+}
+
+.comparison-cell {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.comparison-cell-database {
+  color: var(--ink-soft);
+}
