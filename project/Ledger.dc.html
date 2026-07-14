@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F2EEE4;--paper-2:#E9E2D2;--card:#FCFAF3;--ink:#17140F;--ink-soft:#6B6454;--rule:#DAD2BF;--rule-2:#BEB49B;--sun:#B26A12;--settle:#245C43;--void:#A31E17}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--ink);text-decoration:none}
+a:hover{color:var(--sun)}
+em{font-style:italic}
+::selection{background:var(--sun);color:var(--paper)}
+:focus-visible{outline:1.5px solid var(--sun);outline-offset:2px}
+input,button{font:inherit}
+.mono{font-family:'Spline Sans Mono',monospace;font-variant-numeric:tabular-nums}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400}
+.eyebrow{font-family:Archivo,sans-serif;font-weight:600;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft)}
+[data-reveal]{opacity:0;transform:translateY(10px);transition:opacity .45s cubic-bezier(.16,1,.3,1),transform .45s cubic-bezier(.16,1,.3,1)}
+[data-reveal].rv-in{opacity:1;transform:none}
+@keyframes txIn{0%{opacity:0;transform:translateY(-10px);background-color:rgba(178,106,18,.14)}55%{background-color:rgba(178,106,18,.12)}100%{opacity:1;transform:none;background-color:transparent}}
+@keyframes bannerIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@keyframes stampIn{0%{opacity:0;transform:rotate(-7deg) scale(1.5)}60%{opacity:1;transform:rotate(-7deg) scale(.92)}100%{opacity:1;transform:rotate(-7deg) scale(1)}}
+@keyframes scrimIn{from{opacity:0}to{opacity:1}}
+@keyframes sheetIn{from{transform:translateX(102%)}to{transform:translateX(0)}}
+@media (prefers-reduced-motion:reduce){[data-reveal]{opacity:1;transform:none;transition:none}*{animation:none!important}}
+</style>
+</helmet>
+
+<header data-screen-label="Header" style="position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--rule-2)">
+  <div style="max-width:1200px;margin:0 auto;padding:0 40px;height:66px;display:flex;align-items:center;justify-content:space-between">
+    <a href="Volt.dc.html" style="display:flex;align-items:baseline;gap:9px">
+      <span style="width:11px;height:11px;border-radius:50%;background:var(--sun);align-self:center"></span>
+      <span style="font-family:Archivo,sans-serif;font-weight:700;font-size:19px;letter-spacing:.14em">VOLT</span>
+      <span class="serif" style="font-style:italic;font-size:21px;color:var(--ink-soft);margin-left:-1px">Ledger</span>
+    </a>
+    <nav style="display:flex;align-items:center;gap:28px">
+      <a href="Volt.dc.html" class="mono" style="font-size:11px;letter-spacing:.1em;color:var(--ink-soft)" style-hover="color:var(--sun)">← HOME</a>
+      <span class="mono" style="font-size:11px;letter-spacing:.04em;color:var(--ink);display:flex;align-items:center;gap:7px"><span style="width:6px;height:6px;border-radius:50%;background:var(--settle)"></span>₹{{ rateStr }}/kWh</span>
+    </nav>
+  </div>
+</header>
+
+<section data-screen-label="Live Ledger" style="border-bottom:1px solid var(--rule-2)">
+  <div style="max-width:1200px;margin:0 auto;padding:64px 40px 128px">
+
+    <div data-reveal style="display:flex;align-items:center;gap:12px;margin-bottom:24px"><span style="width:22px;height:2px;background:var(--sun)"></span><span class="eyebrow">Live Settlement Ledger · Nolambur Microgrid, Chennai</span></div>
+    <h1 data-reveal class="serif" style="font-size:clamp(44px,6vw,88px);line-height:.98;letter-spacing:-0.01em;margin:0 0 26px;max-width:16ch;text-wrap:balance">Watch the street <em style="color:var(--settle)">settle</em> in real time.</h1>
+    <p data-reveal style="font-size:17.5px;line-height:1.6;color:var(--ink-soft);margin:0 0 56px;max-width:64ch">Ten households on one rooftop-solar street, simulated through a single afternoon. Every trade is hashed into a chain — each entry sealed against the one before it. Change a single figure and watch the record refuse to lie.</p>
+
+    <div data-reveal style="display:grid;grid-template-columns:1.3fr 1fr 1fr;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--rule-2);margin-bottom:80px">
+      <div style="padding:22px 28px 24px 0">
+        <div class="eyebrow" style="margin-bottom:12px">Community Rate</div>
+        <div style="display:flex;align-items:baseline;gap:12px">
+          <span class="mono" style="font-size:34px;font-weight:500;letter-spacing:-0.01em">₹{{ rateStr }}</span>
+          <span class="mono" style="font-size:12px;color:var(--ink-soft)">{{ rateDelta }} /kWh</span>
+        </div>
+        <svg width="150" height="24" viewBox="0 0 150 24" style="display:block;margin-top:10px;overflow:visible"><polyline points="{{ sparkPoints }}" fill="none" stroke="#B26A12" stroke-width="1.25"></polyline></svg>
+      </div>
+      <div style="padding:22px 28px 24px;border-left:1px solid var(--rule-2)">
+        <div class="eyebrow" style="margin-bottom:12px">Sim Clock</div>
+        <div class="mono" style="font-size:34px;font-weight:500;letter-spacing:-0.01em">{{ simClock }}</div>
+        <div class="mono" style="font-size:10.5px;color:var(--ink-soft);margin-top:12px;letter-spacing:.04em">SOLAR AFTERNOON · ×{{ speedStr }} SPEED</div>
+      </div>
+      <div style="padding:22px 0 24px 28px;border-left:1px solid var(--rule-2)">
+        <div class="eyebrow" style="margin-bottom:12px">Settled Today</div>
+        <div class="mono" style="font-size:34px;font-weight:500;letter-spacing:-0.01em">{{ totKwhStr }}<span style="font-size:15px;color:var(--ink-soft)"> kWh</span></div>
+        <div class="mono" style="font-size:10.5px;color:var(--ink-soft);margin-top:12px;letter-spacing:.04em">₹{{ totCreditStr }} KEPT ON THE STREET</div>
+      </div>
+    </div>
+
+    <div data-reveal style="margin-bottom:84px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap">
+        <h2 class="serif" style="font-size:28px;letter-spacing:-0.01em;margin:0">The neighbourhood <span style="color:var(--ink-soft)">· live energy map</span></h2>
+        <div style="display:flex;gap:20px;align-items:center">
+          <span class="mono" style="font-size:10px;letter-spacing:.08em;color:var(--ink-soft);display:flex;align-items:center;gap:7px"><span style="width:11px;height:11px;border:2px solid var(--sun);border-radius:50%"></span>SURPLUS · FULLER RING = MORE GIVEN</span>
+          <span class="mono" style="font-size:10px;letter-spacing:.08em;color:var(--ink-soft);display:flex;align-items:center;gap:7px"><span style="width:11px;height:11px;border:2px solid var(--settle);border-radius:50%"></span>DRAWING FROM THE STREET</span>
+        </div>
+      </div>
+      <div style="position:relative;border:1px solid var(--rule-2);background:radial-gradient(120% 90% at 50% 46%,#FCFAF3 0%,#F1EBDD 100%);box-shadow:0 34px 70px -46px rgba(23,20,15,.42);overflow:hidden">
+        <canvas ref="{{ mapCanvas }}" onClick="{{ onMapClick }}" onPointerMove="{{ onMapMove }}" style="display:block;width:100%;height:500px"></canvas>
+        <div class="mono" style="position:absolute;left:18px;bottom:14px;font-size:9px;letter-spacing:.1em;color:var(--ink-soft);pointer-events:none">NOLAMBUR MICROGRID · SITE PLAN · CLICK A HOUSE FOR ITS DOSSIER</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap">
+      <h2 class="serif" style="font-size:28px;letter-spacing:-0.01em;margin:0">The street <span style="color:var(--ink-soft)">· ten households</span></h2>
+      <div style="display:flex;gap:20px;align-items:center">
+        <span class="mono" style="font-size:10px;letter-spacing:.1em;color:var(--ink-soft);display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;background:var(--sun)"></span>EXPORTING</span>
+        <span class="mono" style="font-size:10px;letter-spacing:.1em;color:var(--ink-soft);display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;background:var(--settle)"></span>IMPORTING</span>
+      </div>
+    </div>
+    <div data-reveal style="display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:14px;margin-bottom:96px">
+      <sc-for list="{{ houses }}" as="h" hint-placeholder-count="10">
+        <div onClick="{{ h.onOpen }}" title="Open dossier" style="position:relative;background:var(--card);border:1px solid var(--rule);border-left:3px solid {{ h.accent }};padding:18px 18px 15px;cursor:pointer;transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-3px);box-shadow:0 14px 26px -18px rgba(23,20,15,.5)">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
+            <span class="mono" style="font-size:9px;letter-spacing:.08em;color:var(--ink-soft)">{{ h.meta }}</span>
+            <span class="mono" style="font-size:9px;letter-spacing:.13em;color:{{ h.accent }}">{{ h.status }}</span>
+          </div>
+          <div class="serif" style="font-size:21px;line-height:1.05;margin-bottom:12px">{{ h.name }}</div>
+          <div class="mono" style="font-size:20px;font-weight:500;margin-bottom:15px;letter-spacing:-0.01em">{{ h.balance }}</div>
+          <div style="border-top:1px solid var(--rule);padding-top:11px;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;justify-content:space-between" class="mono"><span style="font-size:9.5px;letter-spacing:.1em;color:var(--ink-soft)">OUTPUT</span><span style="font-size:11.5px">{{ h.out }} kW</span></div>
+            <div style="display:flex;justify-content:space-between" class="mono"><span style="font-size:9.5px;letter-spacing:.1em;color:var(--ink-soft)">DRAW</span><span style="font-size:11.5px">{{ h.draw }} kW</span></div>
+          </div>
+          <div style="border-top:1px solid var(--rule);margin-top:12px;padding-top:9px;display:flex;justify-content:space-between;align-items:center">
+            <span class="mono" style="font-size:8.5px;letter-spacing:.16em;color:var(--ink-soft)">OPEN DOSSIER</span>
+            <span class="mono" style="font-size:12px;color:{{ h.accent }}">↗</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="position:relative">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap">
+        <h2 class="serif" style="font-size:28px;letter-spacing:-0.01em;margin:0">The chain <span style="color:var(--ink-soft)">· sha-256 sealed</span></h2>
+        <div class="mono" style="font-size:10.5px;letter-spacing:.06em;color:var(--sun)">TAMPER TEST — CLICK ANY kWh AND RETYPE IT</div>
+      </div>
+
+      <sc-if value="{{ compromised }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:-6px;right:8px;z-index:5;border:2.5px solid var(--void);color:var(--void);padding:7px 14px;font-family:Archivo,sans-serif;font-weight:700;font-size:15px;letter-spacing:.16em;opacity:.9;transform:rotate(-7deg);animation:stampIn .3s cubic-bezier(.16,1,.3,1);pointer-events:none">INTEGRITY VOID</div>
+      </sc-if>
+
+      <div data-reveal style="background:var(--card);border:1px solid var(--rule-2);box-shadow:0 34px 70px -46px rgba(23,20,15,.42)">
+        <div style="background:{{ statusBg }};border-bottom:1px solid var(--rule-2);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;animation:{{ statusAnim }}">
+          <div class="mono" style="display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.08em;color:{{ statusColor }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ statusColor }}"></span>{{ statusText }}</div>
+          <sc-if value="{{ compromised }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ onRestore }}" class="mono" style="font-size:10px;letter-spacing:.12em;color:var(--paper);background:var(--void);border:1px solid var(--void);border-radius:2px;padding:7px 15px;cursor:pointer;transition:opacity .15s,transform .1s" style-hover="opacity:.85" style-active="transform:translateY(1px)">RE-SEAL LEDGER</button>
+          </sc-if>
+        </div>
+        <div class="mono" style="display:grid;grid-template-columns:64px 1fr 96px 118px 152px;gap:16px;padding:12px 22px;border-bottom:1px solid var(--rule-2);font-size:9px;letter-spacing:.16em;color:var(--ink-soft)">
+          <span>TIME</span><span>FROM → TO</span><span style="text-align:right">kWh</span><span style="text-align:right">CREDIT</span><span style="text-align:right">SEAL</span>
+        </div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="10">
+          <div class="mono" style="display:grid;grid-template-columns:64px 1fr 96px 118px 152px;gap:16px;align-items:center;padding:0 22px;height:50px;border-bottom:1px solid var(--rule);border-left:3px solid {{ r.edge }};background:{{ r.rowBg }};font-size:13px;transition:background .15s,border-color .15s,color .3s;animation:{{ r.anim }}" style-hover="background:var(--paper-2);border-left-color:var(--sun)">
+            <span style="color:var(--ink-soft)">{{ r.time }}</span>
+            <span style="color:{{ r.fg }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:Archivo,sans-serif;font-weight:500;font-size:13.5px">{{ r.from }} <span style="color:var(--ink-soft)">→</span> {{ r.to }}</span>
+            <sc-if value="{{ r.isEditing }}" hint-placeholder-val="{{ false }}">
+              <input value="{{ editValue }}" onChange="{{ onEditChange }}" onKeyDown="{{ onEditKey }}" onBlur="{{ onEditCommit }}" autoFocus="{{ true }}" class="mono" style="width:100%;box-sizing:border-box;background:var(--paper);border:1.5px solid var(--sun);border-radius:2px;color:var(--sun);font-size:13px;padding:4px 6px;text-align:right;outline:none">
+            </sc-if>
+            <sc-if value="{{ r.notEditing }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ r.onEdit }}" title="Tamper: edit this figure" class="mono" style="background:none;border:none;padding:2px 0;cursor:text;color:{{ r.fg }};font-size:13px;text-align:right;border-bottom:1px dashed {{ r.editHint }};transition:border-color .15s" style-hover="border-bottom-color:var(--ink-soft)">{{ r.kwh }}</button>
+            </sc-if>
+            <span style="color:{{ r.creditFg }};text-align:right">{{ r.credit }}</span>
+            <span style="text-align:right;line-height:1.25">
+              <sc-if value="{{ r.invalid }}" hint-placeholder-val="{{ false }}">
+                <span style="display:inline-block;border:1px solid var(--void);color:var(--void);font-size:8.5px;letter-spacing:.14em;padding:1px 5px;transform:rotate(-3deg);margin-bottom:2px">VOID</span>
+                <span style="display:block;color:var(--void);font-size:11px">{{ r.calc }}</span>
+              </sc-if>
+              <sc-if value="{{ r.valid }}" hint-placeholder-val="{{ true }}">
+                <span style="color:var(--ink-soft);font-size:11.5px">{{ r.hash }}</span>
+              </sc-if>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+      <div class="mono" style="margin-top:15px;font-size:9.5px;letter-spacing:.06em;color:var(--ink-soft);line-height:1.7;max-width:78ch">EACH SEAL = SHA-256( PREVIOUS SEAL + ENTRY PAYLOAD ). ALTER ONE FIGURE AND EVERY ENTRY DOWNSTREAM FAILS VERIFICATION — COMPUTED LIVE IN YOUR BROWSER, NOT FAKED.</div>
+    </div>
+
+  </div>
+</section>
+
+<footer data-screen-label="Footer">
+  <div class="mono" style="max-width:1200px;margin:0 auto;padding:36px 40px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;font-size:10.5px;letter-spacing:.06em;color:var(--ink-soft)">
+    <span>VOLT · A TRANSPARENT LOCAL ENERGY MARKET · NOLAMBUR, CHENNAI · OPEN ENERGY CHALLENGE 2026</span>
+    <span>SIMULATED DATA — NOTHING REAL WAS BILLED</span>
+  </div>
+</footer>
+
+<sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:50">
+    <div onClick="{{ onCloseDrawer }}" style="position:absolute;inset:0;background:rgba(23,20,15,.5);animation:scrimIn .2s ease"></div>
+    <div style="position:absolute;top:0;right:0;height:100dvh;width:min(472px,94vw);background:var(--paper);border-left:1px solid var(--rule-2);box-shadow:-44px 0 90px -50px rgba(23,20,15,.75);overflow-y:auto;animation:sheetIn .42s cubic-bezier(.16,1,.3,1)">
+
+      <div style="position:sticky;top:0;background:var(--paper);border-bottom:1px solid var(--rule-2);padding:22px 26px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;z-index:2">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+            <span style="width:9px;height:9px;background:{{ dz.accent }}"></span>
+            <span class="mono" style="font-size:9px;letter-spacing:.14em;color:{{ dz.accent }}">{{ dz.status }}</span>
+          </div>
+          <div class="serif" style="font-size:31px;line-height:1">{{ dz.name }}</div>
+          <div class="mono" style="font-size:9.5px;letter-spacing:.06em;color:var(--ink-soft);margin-top:8px">{{ dz.sub }}</div>
+        </div>
+        <button onClick="{{ onCloseDrawer }}" class="mono" aria-label="Close dossier" style="flex:none;width:34px;height:34px;border:1px solid var(--rule-2);background:var(--card);color:var(--ink-soft);border-radius:2px;cursor:pointer;font-size:17px;line-height:1;transition:border-color .15s,color .15s" style-hover="border-color:var(--ink);color:var(--ink)">×</button>
+      </div>
+
+      <div style="padding:24px 26px 44px">
+
+        <div class="eyebrow" style="margin-bottom:12px">Live now</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:34px">
+          <div style="border:1px solid var(--rule);background:var(--card);padding:14px 16px">
+            <div class="mono" style="font-size:9px;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:9px">OUTPUT</div>
+            <div class="mono" style="font-size:23px;font-weight:500">{{ dz.out }}<span style="font-size:12px;color:var(--ink-soft)"> kW</span></div>
+          </div>
+          <div style="border:1px solid var(--rule);background:var(--card);padding:14px 16px">
+            <div class="mono" style="font-size:9px;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:9px">DRAW</div>
+            <div class="mono" style="font-size:23px;font-weight:500">{{ dz.draw }}<span style="font-size:12px;color:var(--ink-soft)"> kW</span></div>
+          </div>
+          <div style="border:1px solid var(--rule);background:var(--card);padding:14px 16px">
+            <div class="mono" style="font-size:9px;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:9px">NET FLOW</div>
+            <div class="mono" style="font-size:23px;font-weight:500;color:{{ dz.netColor }}">{{ dz.net }}<span style="font-size:12px;color:var(--ink-soft)"> kW</span></div>
+          </div>
+          <div style="border:1px solid var(--rule);background:var(--card);padding:14px 16px">
+            <div class="mono" style="font-size:9px;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:9px">WALLET</div>
+            <div class="mono" style="font-size:23px;font-weight:500">{{ dz.balance }}</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
+          <div class="eyebrow">Today · generation vs demand</div>
+          <div class="mono" style="font-size:9px;letter-spacing:.08em;color:var(--ink-soft)">NOW {{ dz.now }}</div>
+        </div>
+        <div style="border:1px solid var(--rule);background:var(--card);padding:14px 12px 10px">
+          <svg viewBox="0 0 320 132" width="100%" style="display:block;overflow:visible">
+            <line x1="6" y1="112" x2="314" y2="112" stroke="var(--rule-2)" stroke-width="1"></line>
+            <path d="{{ dz.area }}" fill="rgba(178,106,18,.13)" stroke="none"></path>
+            <polyline points="{{ dz.conLine }}" fill="none" stroke="var(--settle)" stroke-width="1.25"></polyline>
+            <polyline points="{{ dz.genLine }}" fill="none" stroke="var(--sun)" stroke-width="1.6"></polyline>
+            <line x1="{{ dz.nowX }}" y1="12" x2="{{ dz.nowX }}" y2="112" stroke="var(--ink-soft)" stroke-width="1" stroke-dasharray="2 3"></line>
+            <text x="{{ dz.ax6 }}" y="126" text-anchor="middle" fill="#6B6454" style="font-family:'Spline Sans Mono',monospace;font-size:7px">06:00</text>
+            <text x="{{ dz.ax12 }}" y="126" text-anchor="middle" fill="#6B6454" style="font-family:'Spline Sans Mono',monospace;font-size:7px">12:00</text>
+            <text x="{{ dz.ax18 }}" y="126" text-anchor="middle" fill="#6B6454" style="font-family:'Spline Sans Mono',monospace;font-size:7px">18:00</text>
+          </svg>
+          <div style="display:flex;gap:18px;margin-top:6px;padding:0 4px">
+            <span class="mono" style="font-size:9px;letter-spacing:.06em;color:var(--ink-soft);display:flex;align-items:center;gap:6px"><span style="width:11px;height:2px;background:var(--sun)"></span>GENERATION</span>
+            <span class="mono" style="font-size:9px;letter-spacing:.06em;color:var(--ink-soft);display:flex;align-items:center;gap:6px"><span style="width:11px;height:2px;background:var(--settle)"></span>DEMAND</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--rule);background:var(--card);margin:14px 0 8px">
+          <div style="padding:12px 12px;border-right:1px solid var(--rule)">
+            <div class="mono" style="font-size:8.5px;letter-spacing:.1em;color:var(--ink-soft);margin-bottom:7px">GEN</div>
+            <div class="mono" style="font-size:15px;font-weight:500">{{ dz.gen }}</div>
+            <div class="mono" style="font-size:8px;color:var(--ink-soft);margin-top:2px">kWh</div>
+          </div>
+          <div style="padding:12px 12px;border-right:1px solid var(--rule)">
+            <div class="mono" style="font-size:8.5px;letter-spacing:.1em;color:var(--ink-soft);margin-bottom:7px">USED</div>
+            <div class="mono" style="font-size:15px;font-weight:500">{{ dz.con }}</div>
+            <div class="mono" style="font-size:8px;color:var(--ink-soft);margin-top:2px">kWh</div>
+          </div>
+          <div style="padding:12px 12px;border-right:1px solid var(--rule)">
+            <div class="mono" style="font-size:8.5px;letter-spacing:.1em;color:var(--ink-soft);margin-bottom:7px">EXPORT</div>
+            <div class="mono" style="font-size:15px;font-weight:500;color:var(--sun)">{{ dz.exp }}</div>
+            <div class="mono" style="font-size:8px;color:var(--ink-soft);margin-top:2px">kWh</div>
+          </div>
+          <div style="padding:12px 12px">
+            <div class="mono" style="font-size:8.5px;letter-spacing:.1em;color:var(--ink-soft);margin-bottom:7px">IMPORT</div>
+            <div class="mono" style="font-size:15px;font-weight:500;color:var(--settle)">{{ dz.imp }}</div>
+            <div class="mono" style="font-size:8px;color:var(--ink-soft);margin-top:2px">kWh</div>
+          </div>
+        </div>
+        <div class="mono" style="font-size:9px;letter-spacing:.08em;color:var(--ink-soft);margin-bottom:34px">{{ dz.selfNote }}</div>
+
+        <div class="eyebrow" style="margin-bottom:10px">Rooftop specification</div>
+        <div style="border-top:1px solid var(--rule);margin-bottom:34px">
+          <sc-for list="{{ dz.specs }}" as="s" hint-placeholder-count="10">
+            <div style="display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--rule)">
+              <span class="mono" style="font-size:10px;letter-spacing:.06em;color:var(--ink-soft)">{{ s.k }}</span>
+              <span class="mono" style="font-size:11.5px;text-align:right">{{ s.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div class="eyebrow" style="margin-bottom:10px">Ledger activity · today</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid var(--rule);background:var(--card);margin-bottom:16px">
+          <div style="padding:12px 14px;border-right:1px solid var(--rule)">
+            <div class="mono" style="font-size:8.5px;letter-spacing:.1em;color:var(--ink-soft);margin-bottom:7px">EARNED</div>
+            <div class="mono" style="font-size:14px;font-weight:500;color:var(--sun)">+₹{{ dz.earned }}</div>
+          </div>
+          <div style="padding:12px 14px;border-right:1px solid var(--rule)">
+            <div class="mono" style="font-size:8.5px;letter-spacing:.1em;color:var(--ink-soft);margin-bottom:7px">SPENT</div>
+            <div class="mono" style="font-size:14px;font-weight:500;color:var(--settle)">−₹{{ dz.spent }}</div>
+          </div>
+          <div style="padding:12px 14px">
+            <div class="mono" style="font-size:8.5px;letter-spacing:.1em;color:var(--ink-soft);margin-bottom:7px">TRADES</div>
+            <div class="mono" style="font-size:14px;font-weight:500">{{ dz.trades }}</div>
+          </div>
+        </div>
+        <sc-for list="{{ dz.acts }}" as="a" hint-placeholder-count="4">
+          <div class="mono" style="display:grid;grid-template-columns:50px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--rule);font-size:11.5px">
+            <span style="color:var(--ink-soft)">{{ a.time }}</span>
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span style="color:{{ a.color }};font-weight:500;font-family:Archivo,sans-serif">{{ a.dir }}</span> <span style="color:var(--ink-soft)">{{ a.arrow }}</span> <span style="font-family:Archivo,sans-serif">{{ a.other }}</span></span>
+            <span style="text-align:right"><span style="color:var(--ink-soft)">{{ a.kwh }} kWh</span>  <span style="color:{{ a.color }}">{{ a.credit }}</span></span>
+          </div>
+        </sc-for>
+        <sc-if value="{{ dz.noActs }}" hint-placeholder-val="{{ false }}">
+          <div class="mono" style="font-size:10.5px;color:var(--ink-soft);padding:8px 0">No trades yet today.</div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;simSpeed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:4,&quot;min&quot;:0.5,&quot;max&quot;:4,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;×&quot;,&quot;section&quot;:&quot;Simulation&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;startHour&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:8,&quot;min&quot;:7,&quot;max&quot;:18,&quot;step&quot;:1,&quot;unit&quot;:&quot;h&quot;,&quot;section&quot;:&quot;Simulation&quot;,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { tick: 0, editingId: null, editValue: '', compromised: false, invalidCount: 0, restoredFlash: false, selected: null };
+
+  constructor(props) {
+    super(props);
+    const sh = (props && props.startHour != null) ? props.startHour : 11;
+    this.simMin = sh * 60;
+    this.rate = 5.5;
+    this.prevRate = 5.5;
+    this.rateHist = new Array(44).fill(5.5);
+    this.chain = [];
+    this._nid = 1;
+    this.totKwh = 0; this.totCredit = 0;
+    this._chainP = Promise.resolve();
+    this.mapCanvas = React.createRef();
+    // pv = array kW, base = baseline load, orient/tilt/batt/since/meter = rooftop dossier specs
+    this.houses = [
+      { name: 'Nikil Sundaram',   pv: 4.2, base: 0.6, balance: 1240.40, ph: 0.3, orient: 'South-south-west', tilt: 12, batt: 5.0,  since: '2021', meter: 'NB-0417' },
+      { name: 'Prem Ramesh',      pv: 3.0, base: 0.5, balance: 312.75,  ph: 1.7, orient: 'South',            tilt: 10, batt: 0,    since: '2022', meter: 'NB-1183' },
+      { name: 'Pranav P',         pv: 5.4, base: 0.9, balance: 2105.10, ph: 2.9, orient: 'South',            tilt: 15, batt: 10.0, since: '2020', meter: 'NB-0952' },
+      { name: 'Vijay',            pv: 0,   base: 0.7, balance: -484.20, ph: 4.1, orient: '—',                tilt: 0,  batt: 0,    since: '—',    meter: 'NB-2261' },
+      { name: 'Karthik Iyer',     pv: 2.2, base: 0.4, balance: 96.30,   ph: 5.3, orient: 'West',             tilt: 12, batt: 0,    since: '2023', meter: 'NB-1546' },
+      { name: 'Deepak Krishnan',  pv: 3.6, base: 1.1, balance: -152.60, ph: 0.9, orient: 'South-east',       tilt: 10, batt: 5.0,  since: '2021', meter: 'NB-0788' },
+      { name: 'Sanjay Murugan',   pv: 4.8, base: 0.8, balance: 878.05,  ph: 2.2, orient: 'South',            tilt: 14, batt: 7.5,  since: '2022', meter: 'NB-0333' },
+      { name: 'Rahul Natarajan',  pv: 0,   base: 0.9, balance: -691.40, ph: 3.4, orient: '—',                tilt: 0,  batt: 0,    since: '—',    meter: 'NB-2490' },
+      { name: 'Aravind Chandran', pv: 2.8, base: 0.5, balance: 204.15,  ph: 5.9, orient: 'South-south-east', tilt: 11, batt: 0,    since: '2023', meter: 'NB-1902' },
+      { name: 'Surya Selvaraj',   pv: 3.9, base: 1.0, balance: -58.90,  ph: 1.1, orient: 'South-west',       tilt: 13, batt: 5.0,  since: '2022', meter: 'NB-0641' }
+    ];
+    for (const h of this.houses) { h.out = 0; h.draw = 0; h.net = 0; h.gen = 0; h.con = 0; h.exp = 0; h.imp = 0; h.earned = 0; h.spent = 0; h.trades = 0; }
+    this.initDailyStats();
+  }
+
+  // ---------- crypto ----------
+  async sha(s) {
+    try {
+      if (window.crypto && crypto.subtle) {
+        const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+        return Array.from(new Uint8Array(b)).map(function(x){ return x.toString(16).padStart(2, '0'); }).join('');
+      }
+    } catch (e) {}
+    let h1 = 0x811c9dc5, h2 = 0xcbf29ce4;
+    for (let i = 0; i < s.length; i++) {
+      h1 = (h1 ^ s.charCodeAt(i)) >>> 0; h1 = (h1 * 0x01000193) >>> 0;
+      h2 = (h2 ^ s.charCodeAt(s.length - 1 - i)) >>> 0; h2 = (h2 * 0x01000193) >>> 0;
+    }
+    return (h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0')).repeat(4).slice(0, 64);
+  }
+
+  payloadStr(p) { return p.t + '|' + p.from + '|' + p.to + '|' + p.kwh.toFixed(2) + '|' + p.credit.toFixed(2); }
+
+  queueBlock(payload, silent) {
+    const self = this;
+    this._chainP = this._chainP.then(async function() {
+      const prev = self.chain.length ? self.chain[self.chain.length - 1].hash : 'GENESIS';
+      const hash = await self.sha(prev + self.payloadStr(payload));
+      self.chain.push({ id: self._nid++, payload: payload, origKwh: payload.kwh, hash: hash, prevHash: prev, born: silent ? 0 : Date.now(), invalid: false, calc: '', tampered: false });
+      self.totKwh += payload.kwh; self.totCredit += payload.credit;
+      if (!self._dead) self.setState({ tick: self.state.tick + 1 });
+      if (!silent) { clearTimeout(self._animT); self._animT = setTimeout(function(){ if(!self._dead) self.forceUpdate(); }, 800); }
+    });
+    return this._chainP;
+  }
+
+  validateChain(afterRestore) {
+    const self = this;
+    this._chainP = this._chainP.then(async function() {
+      let prev = 'GENESIS', bad = 0;
+      for (const b of self.chain) {
+        const h = await self.sha(prev + self.payloadStr(b.payload));
+        b.calc = h;
+        b.invalid = (h !== b.hash);
+        if (b.invalid) bad++;
+        prev = h;
+      }
+      if (self._dead) return;
+      if (bad > 0) {
+        self.setState({ compromised: true, invalidCount: bad, restoredFlash: false, tick: self.state.tick + 1 });
+      } else {
+        self.setState({ compromised: false, invalidCount: 0, restoredFlash: !!afterRestore, tick: self.state.tick + 1 });
+        if (afterRestore) {
+          clearTimeout(self._flashT);
+          self._flashT = setTimeout(function(){ if(!self._dead) self.setState({ restoredFlash: false }); }, 3000);
+        }
+      }
+    });
+  }
+
+  // ---------- simulation ----------
+  sunAt(min) { const h = min / 60; if (h < 6 || h > 19) return 0; return Math.sin(Math.PI * (h - 6) / 13); }
+  conAt(min, base) {
+    const mg = Math.exp(-Math.pow((min - 8 * 60) / 95, 2));
+    const eg = Math.exp(-Math.pow((min - 20 * 60) / 120, 2));
+    const day = (min > 7 * 60 && min < 19 * 60) ? 0.22 : 0.08;
+    return base * (0.5 + 1.05 * mg + 1.7 * eg + day);
+  }
+  fmtClock(min) { const m = Math.floor(min); return String(Math.floor(m / 60) % 24).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
+  money(n) { return (n < 0 ? '−₹' : '₹') + Math.abs(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+  initDailyStats() {
+    for (const h of this.houses) {
+      let g = 0, c = 0;
+      for (let m = 360; m < this.simMin; m += 10) {
+        g += h.pv * this.sunAt(m) * 0.9 * (10 / 60);
+        c += this.conAt(m, h.base) * (10 / 60);
+      }
+      h.gen = g; h.con = c;
+    }
+  }
+
+  simTick() {
+    const sp = this.props.simSpeed != null ? this.props.simSpeed : 1;
+    const prevMin = this.simMin;
+    this.simMin += 2 * sp;
+    let rolled = false;
+    if (this.simMin > 18.5 * 60) { this.simMin = 9 * 60; rolled = true; }
+    const dtH = rolled ? 0 : (this.simMin - prevMin) / 60;
+    const sun = this.sunAt(this.simMin);
+    const now = performance.now();
+    let supply = 0, demand = 0;
+    for (const h of this.houses) {
+      const cloud = 0.82 + 0.18 * Math.sin(now / 9000 + h.ph);
+      h.out = Math.max(0, h.pv * sun * cloud * (0.95 + 0.1 * Math.random()));
+      const eve = this.simMin > 17 * 60 ? 0.5 : 0;
+      h.draw = h.base * (0.8 + 0.4 * Math.random()) + eve;
+      h.net = h.out - h.draw;
+      h.gen += h.out * dtH; h.con += h.draw * dtH;
+      supply += Math.max(0, h.net); demand += Math.max(0, -h.net);
+    }
+    const target = Math.min(7.2, Math.max(4.4, 5.5 + (demand - supply) * 0.3));
+    this.prevRate = this.rateHist[this.rateHist.length - 6] || this.rate;
+    this.rate = this.rate + (target - this.rate) * 0.25 + (Math.random() - 0.5) * 0.05;
+    this.rateHist.push(this.rate); if (this.rateHist.length > 44) this.rateHist.shift();
+    if (rolled) {
+      for (const h of this.houses) { h.exp = 0; h.imp = 0; h.earned = 0; h.spent = 0; h.trades = 0; }
+      this.totKwh = 0; this.totCredit = 0;
+      this.initDailyStats();
+    }
+    this.setState({ tick: this.state.tick + 1 });
+  }
+
+  tryTrade() {
+    if (this.state.compromised) return;
+    const ex = this.houses.filter(function(h){ return h.net > 0.2; });
+    const im = this.houses.filter(function(h){ return h.net < -0.1; });
+    if (!ex.length || !im.length) return;
+    const a = ex[Math.floor(Math.random() * ex.length)];
+    const b = im[Math.floor(Math.random() * im.length)];
+    const kwh = Math.round(Math.min(0.25 + Math.random() * 1.15, Math.max(0.2, a.net)) * 100) / 100;
+    const credit = Math.round(kwh * this.rate * 100) / 100;
+    a.balance += credit; b.balance -= credit;
+    a.exp += kwh; a.earned += credit; a.trades += 1;
+    b.imp += kwh; b.spent += credit; b.trades += 1;
+    this.queueBlock({ t: this.fmtClock(this.simMin), from: a.name, to: b.name, kwh: kwh, credit: credit });
+  }
+
+  seedChain() {
+    const offs = [42, 37, 32, 27, 22, 17, 12, 7, 3];
+    const pairs = [[2,3],[0,7],[6,3],[8,7],[2,9],[4,3],[9,7],[0,3],[6,1]];
+    for (let i = 0; i < offs.length; i++) {
+      const a = this.houses[pairs[i][0]], b = this.houses[pairs[i][1]];
+      const kwh = Math.round((0.3 + Math.random() * 1.1) * 100) / 100;
+      const credit = Math.round(kwh * (5.3 + Math.random() * 0.5) * 100) / 100;
+      a.balance += credit; b.balance -= credit;
+      a.exp += kwh; a.earned += credit; a.trades += 1;
+      b.imp += kwh; b.spent += credit; b.trades += 1;
+      this.queueBlock({ t: this.fmtClock(this.simMin - offs[i]), from: a.name, to: b.name, kwh: kwh, credit: credit }, true);
+    }
+  }
+
+  // ---------- tamper ----------
+  startEdit(id) {
+    const b = this.chain.find(function(x){ return x.id === id; });
+    if (!b) return;
+    this.setState({ editingId: id, editValue: b.payload.kwh.toFixed(2) });
+  }
+  commitEdit() {
+    const id = this.state.editingId;
+    if (id == null) return;
+    const b = this.chain.find(function(x){ return x.id === id; });
+    const v = parseFloat(this.state.editValue);
+    this.setState({ editingId: null });
+    if (!b || isNaN(v) || v <= 0 || Math.abs(v - b.payload.kwh) < 0.005) return;
+    b.payload.kwh = Math.round(v * 100) / 100;
+    b.tampered = true;
+    this.validateChain(false);
+  }
+  restore() {
+    for (const b of this.chain) { if (b.tampered) { b.payload.kwh = b.origKwh; b.tampered = false; } }
+    this.validateChain(true);
+  }
+
+  // ---------- dossier ----------
+  openDrawer(i) { this.setState({ selected: i }); }
+  closeDrawer() { this.setState({ selected: null }); }
+
+  // ---------- 2D neighbourhood plan ----------
+  setupMap() {
+    const self = this;
+    if (this._mapBound) return;
+    this._mapBound = true;
+    let cv = null, ctx = null, W = 0, H = 0, D = 1;
+    const refresh = function() {
+      const el = self.mapCanvas.current;
+      if (!el) return false;
+      if (el !== cv) { cv = el; ctx = cv.getContext('2d'); }
+      D = Math.min(2, window.devicePixelRatio || 1);
+      const r = cv.getBoundingClientRect();
+      W = Math.max(10, r.width); H = Math.max(10, r.height);
+      const bw = Math.round(W * D), bh = Math.round(H * D);
+      if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; }
+      return true;
+    };
+
+    const SUN = '178,106,18', TEA = '36,92,67', INK = '23,20,15', RULE = '190,178,155';
+    const cols = 5;
+    this._mapProj = new Array(10);
+    let packets = [], lastSpawn = 0;
+    const easeIO = function(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+
+    const draw = function(t) {
+      ctx.setTransform(D, 0, 0, D, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      const houses = self.houses;
+      const padX = Math.max(40, W * 0.06);
+      const busY = H * 0.5;
+      const rowGap = Math.min(140, H * 0.28);
+      const yA = busY - rowGap, yB = busY + rowGap;
+      const cw = (W - 2 * padX) / cols;
+      const colX = function(c) { return padX + (c + 0.5) * cw; };
+      const hs = Math.min(50, cw * 0.46);
+      const gaugeR = hs * 0.82;
+      const pos = function(i) { const c = i % cols, top = i < cols; return { x: colX(c), y: top ? yA : yB, top: top }; };
+      const edgeYOf = function(p) { return p.top ? p.y + hs / 2 : p.y - hs / 2; };
+
+      // shared microgrid bus
+      const busX0 = colX(0), busX1 = colX(cols - 1);
+      ctx.strokeStyle = 'rgba(' + INK + ',0.28)'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(busX0, busY); ctx.lineTo(busX1, busY); ctx.stroke();
+      ctx.strokeStyle = 'rgba(' + INK + ',0.12)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(busX0, busY - 4); ctx.lineTo(busX1, busY - 4); ctx.moveTo(busX0, busY + 4); ctx.lineTo(busX1, busY + 4); ctx.stroke();
+      if (busX1 + 82 < W) { ctx.textAlign = 'left'; ctx.font = '500 8px "Spline Sans Mono",monospace'; ctx.fillStyle = '#6B6454'; ctx.fillText('SHARED BUS', busX1 + 9, busY - 5); }
+
+      // service drops + bus taps
+      for (let i = 0; i < 10; i++) {
+        const p = pos(i), net = houses[i].net;
+        const col = net > 0.12 ? SUN : (net < -0.12 ? TEA : RULE);
+        const a = net > 0.12 ? 0.58 : (net < -0.12 ? 0.52 : 0.22);
+        ctx.strokeStyle = 'rgba(' + col + ',' + a + ')'; ctx.lineWidth = (net > 0.12 || net < -0.12) ? 1.6 : 1;
+        ctx.beginPath(); ctx.moveTo(p.x, edgeYOf(p)); ctx.lineTo(p.x, busY); ctx.stroke();
+        ctx.fillStyle = 'rgba(' + col + ',' + Math.max(0.32, a) + ')';
+        ctx.fillRect(p.x - 2.5, busY - 2.5, 5, 5);
+        self._mapProj[i] = { x: p.x, y: p.y };
+      }
+
+      // energy packets ride the bus: giver -> down -> along bus -> up -> taker
+      if (!self.reduced) {
+        if (t - lastSpawn > 520) {
+          lastSpawn = t;
+          const exp = [], imp = [];
+          for (let i = 0; i < 10; i++) { if (houses[i].net > 0.2) exp.push(i); if (houses[i].net < -0.1) imp.push(i); }
+          if (exp.length && imp.length) packets.push({ a: exp[Math.floor(Math.random() * exp.length)], b: imp[Math.floor(Math.random() * imp.length)], t0: t, dur: 1500 + Math.random() * 500 });
+        }
+        packets = packets.filter(function(pk) {
+          const q = (t - pk.t0) / pk.dur; if (q >= 1) return false;
+          const A = pos(pk.a), B = pos(pk.b);
+          const ea = edgeYOf(A), eb = edgeYOf(B);
+          const L1 = Math.abs(busY - ea), L2 = Math.abs(B.x - A.x), L3 = Math.abs(eb - busY), tot = (L1 + L2 + L3) || 1;
+          const d = easeIO(q) * tot;
+          let x, y;
+          if (d < L1) { x = A.x; y = ea + (busY - ea) * (d / (L1 || 1)); }
+          else if (d < L1 + L2) { const u = (d - L1) / (L2 || 1); x = A.x + (B.x - A.x) * u; y = busY; }
+          else { const u = (d - L1 - L2) / (L3 || 1); x = B.x; y = busY + (eb - busY) * u; }
+          const alpha = Math.min(1, q / 0.12, (1 - q) / 0.14);
+          const g = ctx.createRadialGradient(x, y, 0.5, x, y, 9);
+          g.addColorStop(0, 'rgba(' + SUN + ',' + (alpha * 0.55).toFixed(3) + ')'); g.addColorStop(1, 'rgba(' + SUN + ',0)');
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 9, 0, 7); ctx.fill();
+          ctx.fillStyle = 'rgba(' + SUN + ',' + alpha.toFixed(3) + ')'; ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 7); ctx.fill();
+          return true;
+        });
+      }
+
+      // houses with ring gauges — fuller / brighter = giving more
+      for (let i = 0; i < 10; i++) {
+        const p = pos(i), h = houses[i], net = h.net, cx = p.x, cy = p.y;
+        if (net > 0.12) {
+          const mag = Math.min(1, net / 2.4);
+          const breathe = self.reduced ? 1 : (0.86 + 0.14 * Math.sin(t / 700 + i));
+          const R = (hs * 0.85 + mag * hs * 1.6) * breathe;
+          const g = ctx.createRadialGradient(cx, cy, hs * 0.3, cx, cy, R);
+          g.addColorStop(0, 'rgba(' + SUN + ',' + (0.26 * (0.5 + mag)).toFixed(3) + ')'); g.addColorStop(1, 'rgba(' + SUN + ',0)');
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fill();
+        } else if (net < -0.12) {
+          const mag = Math.min(1, -net / 2);
+          const ph = self.reduced ? 0.4 : ((t / 1400) % 1);
+          const rr = hs * (1.35 - ph * 0.72);
+          ctx.strokeStyle = 'rgba(' + TEA + ',' + (0.5 * mag * (1 - ph)).toFixed(3) + ')'; ctx.lineWidth = 1.4;
+          ctx.beginPath(); ctx.arc(cx, cy, rr, 0, 7); ctx.stroke();
+        }
+        // gauge track + magnitude arc
+        ctx.strokeStyle = 'rgba(' + INK + ',0.10)'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, cy, gaugeR, 0, 7); ctx.stroke();
+        const frac = Math.min(1, Math.abs(net) / 2.6);
+        if (frac > 0.02) {
+          const give = net >= 0;
+          ctx.strokeStyle = give ? 'rgba(' + SUN + ',0.95)' : 'rgba(' + TEA + ',0.95)';
+          ctx.lineWidth = 3; ctx.lineCap = 'round';
+          ctx.beginPath(); ctx.arc(cx, cy, gaugeR, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2 * (give ? 1 : -1), !give); ctx.stroke();
+          ctx.lineCap = 'butt';
+        }
+        // house footprint
+        ctx.fillStyle = '#FCFAF3'; ctx.strokeStyle = 'rgba(' + INK + ',0.62)'; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.rect(cx - hs / 2, cy - hs / 2, hs, hs); ctx.fill(); ctx.stroke();
+        if (h.pv > 0) {
+          const ps = hs * 0.6;
+          ctx.fillStyle = 'rgba(' + SUN + ',0.85)'; ctx.fillRect(cx - ps / 2, cy - ps / 2, ps, ps);
+          ctx.strokeStyle = 'rgba(' + INK + ',0.38)'; ctx.lineWidth = 0.75;
+          ctx.beginPath(); ctx.moveTo(cx - ps / 2, cy); ctx.lineTo(cx + ps / 2, cy); ctx.moveTo(cx, cy - ps / 2); ctx.lineTo(cx, cy + ps / 2); ctx.stroke();
+          ctx.strokeStyle = 'rgba(' + INK + ',0.24)'; ctx.strokeRect(cx - ps / 2, cy - ps / 2, ps, ps);
+        } else {
+          ctx.fillStyle = 'rgba(' + INK + ',0.22)'; ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, 7); ctx.fill();
+        }
+      }
+
+      // labels
+      ctx.textAlign = 'center';
+      for (let i = 0; i < 10; i++) {
+        const p = pos(i), h = houses[i], net = h.net, cx = p.x;
+        const nameY = p.top ? p.y - gaugeR - 20 : p.y + gaugeR + 16;
+        const valY = p.top ? p.y - gaugeR - 8 : p.y + gaugeR + 28;
+        ctx.font = '500 9.5px "Spline Sans Mono",monospace'; ctx.fillStyle = '#6B6454';
+        ctx.fillText(h.name.split(' ')[0].toUpperCase(), cx, nameY);
+        ctx.font = '600 9.5px "Spline Sans Mono",monospace';
+        if (net > 0.12) { ctx.fillStyle = 'rgba(' + SUN + ',0.95)'; ctx.fillText('\u25B2 ' + net.toFixed(1) + ' kW', cx, valY); }
+        else if (net < -0.12) { ctx.fillStyle = 'rgba(' + TEA + ',0.95)'; ctx.fillText('\u25BC ' + Math.abs(net).toFixed(1) + ' kW', cx, valY); }
+        else { ctx.fillStyle = '#6B6454'; ctx.fillText('\u2014 idle', cx, valY); }
+      }
+    };
+
+    if (this.reduced) {
+      let tries = 0;
+      const once = function() { if (refresh()) draw(performance.now()); else if (tries++ < 180) requestAnimationFrame(once); };
+      once();
+      this._mapIv = setInterval(once, 1400);
+      return;
+    }
+    const paintOnce = function() { if (refresh()) { draw(performance.now()); return true; } return false; };
+    // paint a first frame via timers (fire even while the tab is hidden and rAF is paused)
+    let warmTries = 0;
+    const warm = function() { if (self._dead || paintOnce()) return; if (warmTries++ < 240) setTimeout(warm, 60); };
+    warm();
+    const loop = function(t) { if (self._dead) return; if (refresh()) draw(t); self._mapRaf = requestAnimationFrame(loop); };
+    this._mapRaf = requestAnimationFrame(loop);
+    this._mapVis = function() { if (!document.hidden && !self._dead) { paintOnce(); cancelAnimationFrame(self._mapRaf); self._mapRaf = requestAnimationFrame(loop); } };
+    document.addEventListener('visibilitychange', this._mapVis);
+  }
+
+  mapPick(e) {
+    const el = e.currentTarget; if (!el) return -1;
+    const r = el.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    const P = this._mapProj || [];
+    let best = -1, bd = 46;
+    for (let i = 0; i < P.length; i++) { const p = P[i]; if (!p) continue; const d = Math.hypot(p.x - mx, p.y - my); if (d < bd) { bd = d; best = i; } }
+    return best;
+  }
+
+  // ---------- mount ----------
+  componentDidMount() {
+    const self = this;
+    this.reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this.seedChain();
+    this.simTick();
+    this._iv = setInterval(function(){ self.simTick(); }, 1000);
+    this._tiv = setInterval(function(){ self.tryTrade(); }, 3200);
+    this._esc = function(e){ if (e.key === 'Escape' && self.state.selected != null) self.setState({ selected: null }); };
+    document.addEventListener('keydown', this._esc);
+    const initObservers = function() {
+      const els = document.querySelectorAll('[data-reveal]');
+      self._io = new IntersectionObserver(function(entries) {
+        for (const en of entries) { if (en.isIntersecting) { en.target.classList.add('rv-in'); self._io.unobserve(en.target); } }
+      }, { threshold: 0.08 });
+      els.forEach(function(el){ self._io.observe(el); });
+      self.setupMap();
+    };
+    initObservers();
+  }
+
+  componentWillUnmount() {
+    this._dead = true;
+    clearInterval(this._iv); clearInterval(this._tiv);
+    clearTimeout(this._flashT); clearTimeout(this._animT);
+    if (this._esc) document.removeEventListener('keydown', this._esc);
+    cancelAnimationFrame(this._mapRaf); clearInterval(this._mapIv); if (this._mapRo) this._mapRo.disconnect();
+    if (this._mapVis) document.removeEventListener('visibilitychange', this._mapVis);
+    if (this._io) this._io.disconnect();
+  }
+
+  // ---------- dossier data ----------
+  dossier() {
+    const self = this;
+    const i = this.state.selected;
+    if (i == null || !this.houses[i]) return null;
+    const H = this.houses[i];
+    const status = H.net > 0.15 ? 'EXPORTING' : (H.net < -0.15 ? 'IMPORTING' : 'BALANCED');
+    const accent = status === 'EXPORTING' ? 'var(--sun)' : (status === 'IMPORTING' ? 'var(--settle)' : 'var(--rule-2)');
+    const netV = H.out - H.draw;
+    const panels = H.pv > 0 ? Math.round(H.pv / 0.4) : 0;
+    const area = panels ? (panels * 1.9).toFixed(0) + ' m²' : '—';
+    const inv = H.pv > 0 ? ((H.batt > 0 ? 'Hybrid ' : 'String ') + (Math.ceil(H.pv * 2) / 2).toFixed(1) + ' kW') : '—';
+    const battS = H.batt > 0 ? H.batt.toFixed(1) + ' kWh' : 'None';
+    const selfPct = H.gen > 0 ? Math.max(0, Math.min(100, (H.gen - H.exp) / H.gen * 100)) : 0;
+
+    // day chart geometry
+    const CW = 320, padL = 6, padR = 6, padT = 12, yBase = 112, m0 = 300, m1 = 1200;
+    const xF = function(m){ return padL + (m - m0) / (m1 - m0) * (CW - padL - padR); };
+    let peakCon = 0; const gp = [], cp = [];
+    for (let m = m0; m <= m1; m += 20) { const c = self.conAt(m, H.base); if (c > peakCon) peakCon = c; gp.push([m, H.pv * self.sunAt(m) * 0.94]); cp.push([m, c]); }
+    const scale = Math.max(H.pv, peakCon, 1.2) * 1.12;
+    const yF = function(v){ return yBase - Math.min(1, Math.max(0, v / scale)) * (yBase - padT); };
+    const genLine = gp.map(function(p){ return xF(p[0]).toFixed(1) + ',' + yF(p[1]).toFixed(1); }).join(' ');
+    const conLine = cp.map(function(p){ return xF(p[0]).toFixed(1) + ',' + yF(p[1]).toFixed(1); }).join(' ');
+    let area2 = 'M' + xF(m0).toFixed(1) + ',' + yBase;
+    for (const p of gp) area2 += ' L' + xF(p[0]).toFixed(1) + ',' + yF(p[1]).toFixed(1);
+    area2 += ' L' + xF(m1).toFixed(1) + ',' + yBase + ' Z';
+    const nowX = xF(Math.max(m0, Math.min(m1, this.simMin))).toFixed(1);
+
+    const acts = this.chain.filter(function(b){ return b.payload.from === H.name || b.payload.to === H.name; }).slice(-6).reverse().map(function(b){
+      const sold = b.payload.from === H.name;
+      return { time: b.payload.t, dir: sold ? 'SOLD' : 'BOUGHT', arrow: sold ? '→' : '←', other: sold ? b.payload.to : b.payload.from,
+        kwh: b.payload.kwh.toFixed(2), credit: (sold ? '+₹' : '−₹') + b.payload.credit.toFixed(2), color: b.invalid ? 'var(--void)' : (sold ? 'var(--sun)' : 'var(--settle)') };
+    });
+
+    const specs = [
+      { k: 'System capacity', v: H.pv > 0 ? H.pv.toFixed(1) + ' kW' : '—' },
+      { k: 'Panels', v: panels ? panels + ' × 400 Wp' : '—' },
+      { k: 'Array area', v: area },
+      { k: 'Inverter', v: inv },
+      { k: 'Battery', v: battS },
+      { k: 'Orientation', v: H.orient },
+      { k: 'Tilt', v: H.pv > 0 ? H.tilt + '°' : '—' },
+      { k: 'Commissioned', v: H.since },
+      { k: 'Meter ID', v: 'TNEB · ' + H.meter },
+      { k: 'Tariff', v: H.pv > 0 ? 'Prosumer · P2P export' : 'Domestic · LT-1A' }
+    ];
+
+    return {
+      name: H.name, status: status, accent: accent,
+      sub: (H.pv > 0 ? H.pv.toFixed(1) + ' kW rooftop' : 'No rooftop PV') + ' · Meter ' + H.meter + ' · Nolambur',
+      out: H.out.toFixed(2), draw: H.draw.toFixed(2),
+      net: (netV >= 0 ? '+' : '−') + Math.abs(netV).toFixed(2), netColor: netV >= 0 ? 'var(--sun)' : 'var(--settle)',
+      balance: self.money(H.balance), now: this.fmtClock(this.simMin),
+      genLine: genLine, conLine: conLine, area: area2, nowX: nowX,
+      ax6: xF(360).toFixed(1), ax12: xF(720).toFixed(1), ax18: xF(1080).toFixed(1),
+      gen: H.gen.toFixed(1), con: H.con.toFixed(1), exp: H.exp.toFixed(1), imp: H.imp.toFixed(1),
+      selfNote: H.pv > 0 ? ('SELF-CONSUMED ' + selfPct.toFixed(0) + '% OF GENERATION · REST EXPORTED') : 'PURE CONSUMER · DRAWS ENTIRELY FROM THE STREET',
+      earned: H.earned.toFixed(2), spent: H.spent.toFixed(2), trades: String(H.trades),
+      specs: specs, acts: acts, noActs: acts.length === 0
+    };
+  }
+
+  // ---------- render ----------
+  renderVals() {
+    const self = this;
+    const st = this.state;
+    const reduced = this.reduced;
+    const now = Date.now();
+
+    const houses = this.houses.map(function(h, i) {
+      const status = h.net > 0.15 ? 'EXPORTING' : (h.net < -0.15 ? 'IMPORTING' : 'BALANCED');
+      const accent = status === 'EXPORTING' ? 'var(--sun)' : (status === 'IMPORTING' ? 'var(--settle)' : 'var(--rule-2)');
+      return { name: h.name, meta: h.pv > 0 ? h.pv.toFixed(1) + ' kW ROOFTOP' : 'NO ROOFTOP PV',
+        balance: self.money(h.balance), out: h.out.toFixed(2), draw: h.draw.toFixed(2), status: status, accent: accent,
+        onOpen: function(){ self.openDrawer(i); } };
+    });
+
+    const rows = this.chain.slice(-10).reverse().map(function(b) {
+      const inv = b.invalid;
+      const fresh = !reduced && b.born && (now - b.born < 750);
+      const editing = st.editingId === b.id;
+      return {
+        time: b.payload.t,
+        from: b.payload.from, to: b.payload.to,
+        kwh: b.payload.kwh.toFixed(2),
+        credit: '+₹' + b.payload.credit.toFixed(2),
+        hash: b.hash.slice(0, 10),
+        calc: (b.calc || '').slice(0, 10),
+        invalid: inv, valid: !inv,
+        fg: inv ? 'var(--void)' : 'var(--ink)',
+        creditFg: inv ? 'var(--void)' : 'var(--settle)',
+        edge: inv ? 'var(--void)' : 'transparent',
+        rowBg: inv ? 'rgba(163,30,23,.05)' : 'transparent',
+        editHint: inv ? 'var(--void)' : 'transparent',
+        anim: fresh ? 'txIn .6s cubic-bezier(.16,1,.3,1)' : 'none',
+        isEditing: editing, notEditing: !editing,
+        onEdit: function() { self.startEdit(b.id); }
+      };
+    });
+
+    let statusText, statusColor, statusBg;
+    if (st.compromised) {
+      statusText = 'SEAL BROKEN — ' + st.invalidCount + ' ENTR' + (st.invalidCount === 1 ? 'Y' : 'IES') + ' VOID · SETTLEMENT HALTED';
+      statusColor = 'var(--void)'; statusBg = 'rgba(163,30,23,.06)';
+    } else if (st.restoredFlash) {
+      statusText = 'LEDGER RE-SEALED — ALL ' + this.chain.length + ' ENTRIES VERIFIED';
+      statusColor = 'var(--settle)'; statusBg = 'rgba(36,92,67,.07)';
+    } else {
+      const head = this.chain.length ? this.chain[this.chain.length - 1].hash.slice(0, 10) : '··········';
+      statusText = 'CHAIN VERIFIED — ' + this.chain.length + ' ENTRIES · HEAD ' + head;
+      statusColor = 'var(--settle)'; statusBg = 'var(--paper-2)';
+    }
+
+    const hist = this.rateHist;
+    const spark = hist.map(function(v, i) {
+      const x = (i / (hist.length - 1)) * 150;
+      const y = 23 - Math.min(1, Math.max(0, (v - 4.2) / 3.2)) * 21;
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+    const d = this.rate - this.prevRate;
+    const sp = this.props.simSpeed != null ? this.props.simSpeed : 1;
+
+    return {
+      mapCanvas: this.mapCanvas,
+      onMapClick: function(e){ const i = self.mapPick(e); if (i >= 0) self.openDrawer(i); },
+      onMapMove: function(e){ if (e.currentTarget) e.currentTarget.style.cursor = self.mapPick(e) >= 0 ? 'pointer' : 'default'; },
+      rateStr: this.rate.toFixed(2),
+      rateDelta: (d >= 0 ? '▲ ' : '▼ ') + Math.abs(d).toFixed(2),
+      speedStr: (sp % 1 === 0 ? sp.toFixed(0) : sp.toFixed(1)),
+      sparkPoints: spark,
+      simClock: this.fmtClock(this.simMin),
+      totKwhStr: this.totKwh.toFixed(1),
+      totCreditStr: this.totCredit.toFixed(2),
+      houses: houses, rows: rows,
+      compromised: st.compromised,
+      statusText: statusText, statusColor: statusColor, statusBg: statusBg,
+      statusAnim: (st.compromised && !reduced) ? 'bannerIn .15s cubic-bezier(.16,1,.3,1)' : 'none',
+      onRestore: function() { self.restore(); },
+      editValue: st.editValue,
+      onEditChange: function(e) { self.setState({ editValue: e.target.value }); },
+      onEditKey: function(e) { if (e.key === 'Enter') e.target.blur(); if (e.key === 'Escape') self.setState({ editingId: null }); },
+      onEditCommit: function() { self.commitEdit(); },
+      drawerOpen: st.selected != null,
+      dz: this.dossier(),
+      onCloseDrawer: function() { self.closeDrawer(); }
+    };
+  }
+}
+</script>
+</body>
+</html>
