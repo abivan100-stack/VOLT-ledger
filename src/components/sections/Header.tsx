@@ -1,14 +1,12 @@
 import type { MouseEvent } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useEnergyStore } from '../../store/useEnergyStore'
+import { scrollToId } from '../ui/scrollToId'
 import './Header.css'
 
-function scrollToHowItWorks(event: MouseEvent<HTMLAnchorElement>) {
+function handleHowItWorksClick(event: MouseEvent<HTMLAnchorElement>) {
   event.preventDefault()
-  const target = document.getElementById('how')
-  if (!target) return
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' })
+  scrollToId('how')
 }
 
 function Header() {
@@ -37,7 +35,7 @@ function Header() {
             <Link to="/" className="mono header-link">← HOME</Link>
           ) : (
             <>
-              <a href="#how" className="mono header-link" onClick={scrollToHowItWorks}>HOW IT WORKS</a>
+              <a href="#how" className="mono header-link" onClick={handleHowItWorksClick}>HOW IT WORKS</a>
               <Link to="/ledger" className="mono header-link">LIVE LEDGER →</Link>
             </>
           )}
