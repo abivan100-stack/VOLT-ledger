@@ -1,0 +1,18 @@
+.primary-link-button {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  padding: 14px 24px;
+  display: inline-block;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+.primary-link-button:hover {
+  background: var(--sun);
+  border-color: var(--sun);
+}
+.primary-link-button:active {
+  transform: translateY(1px);
+}

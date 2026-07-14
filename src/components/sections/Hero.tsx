@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useEnergyStore } from '../../store/useEnergyStore'
 import { scrollToId } from '../ui/scrollToId'
 import { useScrollReveal } from '../ui/useScrollReveal'
+import PrimaryLinkButton from '../ui/PrimaryLinkButton'
 import { startHeroMesh } from './heroMeshCanvas'
 import './Hero.css'
 
@@ -36,7 +37,7 @@ function Hero() {
             trade sealed against tampering.
           </p>
           <div className="hero-ctas">
-            <Link to="/ledger" className="mono hero-cta-primary">SEE THE LEDGER LIVE →</Link>
+            <PrimaryLinkButton to="/ledger">SEE THE LEDGER LIVE →</PrimaryLinkButton>
             <button type="button" onClick={() => scrollToId('how')} className="mono hero-cta-secondary">
               HOW IT WORKS
             </button>

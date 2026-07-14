@@ -1,0 +1,73 @@
+.ledger-cta {
+  border-bottom: 1px solid var(--rule-2);
+}
+
+.ledger-cta-row {
+  padding-top: 112px;
+  padding-bottom: 112px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 44px;
+}
+
+.ledger-cta-copy {
+  max-width: 640px;
+}
+
+.ledger-cta-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.ledger-cta-kicker-number {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--sun);
+}
+
+.ledger-cta-heading {
+  font-size: clamp(32px, 4.4vw, 58px);
+  line-height: 1.03;
+  letter-spacing: -0.01em;
+  margin: 0 0 20px;
+  text-wrap: balance;
+}
+
+.ledger-cta-body {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 0 34px;
+  max-width: 56ch;
+}
+
+.ledger-cta-stats {
+  display: flex;
+  gap: 40px;
+  align-items: flex-end;
+}
+
+.ledger-cta-stat-label {
+  margin-bottom: 10px;
+}
+
+.ledger-cta-stat-value {
+  font-size: 56px;
+  line-height: 0.85;
+}
+
+.ledger-cta-stat-divider {
+  border-left: 1px solid var(--rule-2);
+  padding-left: 24px;
+}
+
+.ledger-cta-rate {
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 0.9;
+  color: var(--settle);
+}
