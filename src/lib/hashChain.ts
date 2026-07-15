@@ -22,7 +22,6 @@ export interface ChainBlock {
   origKwh: number
   hash: string
   prevHash: string
-  born: number
   invalid: boolean
   calc: string
   tampered: boolean
@@ -38,12 +37,7 @@ export function hashBlock(prevHash: string, payload: TradePayload): string {
   return sha256(prevHash + payloadString(payload))
 }
 
-export function appendBlock(
-  chain: ChainBlock[],
-  nextId: number,
-  payload: TradePayload,
-  bornAt: number,
-): ChainBlock {
+export function appendBlock(chain: ChainBlock[], nextId: number, payload: TradePayload): ChainBlock {
   const prevHash = chain.length ? chain[chain.length - 1].hash : GENESIS_HASH
   const hash = hashBlock(prevHash, payload)
   return {
@@ -52,7 +46,6 @@ export function appendBlock(
     origKwh: payload.kwh,
     hash,
     prevHash,
-    born: bornAt,
     invalid: false,
     calc: '',
     tampered: false,

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { formatClock } from '../lib/format'
 import { integrateGenerationAndConsumption, nextCommunityRate, tickHousehold } from '../lib/simulation'
-import { appendBlock, type ChainBlock } from '../lib/hashChain'
+import { appendBlock, validateChain, type ChainBlock } from '../lib/hashChain'
 
 export interface Household {
   name: string
@@ -46,6 +46,11 @@ interface EnergyStoreState {
   prevRate: number
   rateHistory: number[]
   selectedHouseIndex: number | null
+  compromised: boolean
+  invalidCount: number
+  restoredFlash: boolean
+  editingBlockId: number | null
+  editValue: string
 
   start: () => void
   stop: () => void
@@ -53,6 +58,11 @@ interface EnergyStoreState {
   tryTrade: () => void
   selectHouse: (index: number) => void
   closeDossier: () => void
+  startEdit: (id: number) => void
+  setEditValue: (value: string) => void
+  cancelEdit: () => void
+  commitEdit: () => void
+  restoreChain: () => void
 }
 
 type HouseholdSeed = Omit<
@@ -120,12 +130,13 @@ function seedChain(
       }
       return h
     })
-    const block = appendBlock(
-      chain,
-      nextBlockId,
-      { t: formatClock(startMinute - SEED_OFFSETS_MINUTES[i]), from: from.name, to: to.name, kwh, credit },
-      0,
-    )
+    const block = appendBlock(chain, nextBlockId, {
+      t: formatClock(startMinute - SEED_OFFSETS_MINUTES[i]),
+      from: from.name,
+      to: to.name,
+      kwh,
+      credit,
+    })
     chain = [...chain, block]
     nextBlockId += 1
     totalKwh += kwh
@@ -136,6 +147,7 @@ function seedChain(
 
 let tickHandle: ReturnType<typeof setInterval> | undefined
 let tradeHandle: ReturnType<typeof setInterval> | undefined
+let restoredFlashTimeout: ReturnType<typeof setTimeout> | undefined
 
 export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
   config: { simSpeed: 4, startHour: 8, activity: 1 },
@@ -151,9 +163,55 @@ export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
   prevRate: 5.5,
   rateHistory: new Array(44).fill(5.5),
   selectedHouseIndex: null,
+  compromised: false,
+  invalidCount: 0,
+  restoredFlash: false,
+  editingBlockId: null,
+  editValue: '',
 
   selectHouse: (index: number) => set({ selectedHouseIndex: index }),
   closeDossier: () => set({ selectedHouseIndex: null }),
+
+  startEdit: (id: number) => {
+    const block = get().chain.find((b) => b.id === id)
+    if (!block) return
+    set({ editingBlockId: id, editValue: block.payload.kwh.toFixed(2) })
+  },
+
+  setEditValue: (value: string) => set({ editValue: value }),
+
+  cancelEdit: () => set({ editingBlockId: null }),
+
+  commitEdit: () => {
+    const state = get()
+    const id = state.editingBlockId
+    if (id == null) return
+    const block = state.chain.find((b) => b.id === id)
+    const value = parseFloat(state.editValue)
+    set({ editingBlockId: null })
+    if (!block || Number.isNaN(value) || value <= 0 || Math.abs(value - block.payload.kwh) < 0.005) return
+
+    const nextKwh = Math.round(value * 100) / 100
+    const tamperedChain = state.chain.map((b) =>
+      b.id === id ? { ...b, payload: { ...b.payload, kwh: nextKwh }, tampered: true } : b,
+    )
+    const { blocks, invalidCount } = validateChain(tamperedChain)
+    set({ chain: blocks, compromised: invalidCount > 0, invalidCount, restoredFlash: false })
+  },
+
+  restoreChain: () => {
+    const state = get()
+    const restoredChain = state.chain.map((b) =>
+      b.tampered ? { ...b, payload: { ...b.payload, kwh: b.origKwh }, tampered: false } : b,
+    )
+    const { blocks, invalidCount } = validateChain(restoredChain)
+    const afterRestore = invalidCount === 0
+    set({ chain: blocks, compromised: invalidCount > 0, invalidCount, restoredFlash: afterRestore })
+    if (afterRestore) {
+      clearTimeout(restoredFlashTimeout)
+      restoredFlashTimeout = setTimeout(() => set({ restoredFlash: false }), 3000)
+    }
+  },
 
   start: () => {
     const state = get()
@@ -184,8 +242,10 @@ export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
   stop: () => {
     if (tickHandle !== undefined) clearInterval(tickHandle)
     if (tradeHandle !== undefined) clearInterval(tradeHandle)
+    clearTimeout(restoredFlashTimeout)
     tickHandle = undefined
     tradeHandle = undefined
+    restoredFlashTimeout = undefined
     set({ running: false })
   },
 
@@ -235,6 +295,7 @@ export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
 
   tryTrade: () => {
     const state = get()
+    if (state.compromised) return
     const exporters = state.households.filter((h) => h.net > 0.2)
     const importers = state.households.filter((h) => h.net < -0.1)
     if (!exporters.length || !importers.length) return
@@ -253,12 +314,13 @@ export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
       return h
     })
 
-    const block = appendBlock(
-      state.chain,
-      state.nextBlockId,
-      { t: formatClock(state.simMinute), from: from.name, to: to.name, kwh, credit },
-      Date.now(),
-    )
+    const block = appendBlock(state.chain, state.nextBlockId, {
+      t: formatClock(state.simMinute),
+      from: from.name,
+      to: to.name,
+      kwh,
+      credit,
+    })
 
     set({
       households,
