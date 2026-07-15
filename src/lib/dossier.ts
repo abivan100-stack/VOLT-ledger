@@ -1,14 +1,14 @@
-import { sunAt, consumptionAt } from './simulation'
+import { solarCurve, demandCurve, type DayType } from './simulation'
 import { formatClock, formatMoney } from './format'
 import type { ChainBlock } from './hashChain'
 
 /**
- * Ported verbatim from the original prototype's `dossier()` method
- * (Ledger.dc.html). Takes only the fields it actually needs (a structural
- * subset of Household) rather than importing the type from the store, so
- * this stays a framework-free module like the rest of lib/.
+ * Takes only the fields it actually needs (a structural subset of Household)
+ * rather than importing the type from the store, so this stays a
+ * framework-free module like the rest of lib/.
  */
 export interface DossierHouseholdInput {
+  id: number
   name: string
   pv: number
   base: number
@@ -88,6 +88,7 @@ export function buildDossier(
   household: DossierHouseholdInput,
   chain: ChainBlock[],
   simMinute: number,
+  dayType: DayType,
 ): DossierViewModel {
   const netValue = household.out - household.draw
   const status: DossierStatus = netValue > 0.15 ? 'EXPORTING' : netValue < -0.15 ? 'IMPORTING' : 'BALANCED'
@@ -110,9 +111,10 @@ export function buildDossier(
   const genPoints: Array<[number, number]> = []
   const conPoints: Array<[number, number]> = []
   for (let minute = CHART_MIN_MINUTE; minute <= CHART_MAX_MINUTE; minute += 20) {
-    const consumption = consumptionAt(minute, household.base)
+    const hour = minute / 60
+    const consumption = demandCurve(hour, { id: household.id, base: household.base }, dayType)
     if (consumption > peakConsumption) peakConsumption = consumption
-    genPoints.push([minute, household.pv * sunAt(minute) * 0.94])
+    genPoints.push([minute, household.pv * solarCurve(hour, dayType) * 0.94])
     conPoints.push([minute, consumption])
   }
   const scale = Math.max(household.pv, peakConsumption, 1.2) * 1.12

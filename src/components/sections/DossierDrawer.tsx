@@ -8,6 +8,7 @@ function DossierDrawer() {
   const households = useEnergyStore((state) => state.households)
   const chain = useEnergyStore((state) => state.chain)
   const simMinute = useEnergyStore((state) => state.simMinute)
+  const dayType = useEnergyStore((state) => state.dayType)
   const closeDossier = useEnergyStore((state) => state.closeDossier)
 
   useEffect(() => {
@@ -23,7 +24,7 @@ function DossierDrawer() {
   const household = households[selectedHouseIndex]
   if (!household) return null
 
-  const dossier = buildDossier(household, chain, simMinute)
+  const dossier = buildDossier(household, chain, simMinute, dayType)
   const accentClass = `dossier-accent-${dossier.status.toLowerCase()}`
 
   return (

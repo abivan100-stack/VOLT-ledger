@@ -1,5 +1,6 @@
 import { useEnergyStore } from '../../store/useEnergyStore'
 import { formatClock } from '../../lib/format'
+import { DAY_TYPE_LABELS } from '../../lib/simulation'
 import './StatsStrip.css'
 
 const SPARKLINE_WIDTH = 150
@@ -12,6 +13,7 @@ function StatsStrip() {
   const rateHistory = useEnergyStore((state) => state.rateHistory)
   const simMinute = useEnergyStore((state) => state.simMinute)
   const simSpeed = useEnergyStore((state) => state.config.simSpeed)
+  const dayType = useEnergyStore((state) => state.dayType)
   const totalKwhToday = useEnergyStore((state) => state.totalKwhToday)
   const totalCreditToday = useEnergyStore((state) => state.totalCreditToday)
 
@@ -41,7 +43,7 @@ function StatsStrip() {
       <div className="stats-cell stats-cell-clock">
         <div className="eyebrow stats-label">Sim Clock</div>
         <div className="mono stats-value">{formatClock(simMinute)}</div>
-        <div className="mono stats-caption">SOLAR AFTERNOON · ×{speedLabel} SPEED</div>
+        <div className="mono stats-caption">{DAY_TYPE_LABELS[dayType].toUpperCase()} · ×{speedLabel} SPEED</div>
       </div>
       <div className="stats-cell stats-cell-settled">
         <div className="eyebrow stats-label">Settled Today</div>

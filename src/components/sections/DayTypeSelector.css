@@ -1,0 +1,39 @@
+.day-type-selector {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.day-type-label {
+  color: var(--ink-soft);
+}
+
+.day-type-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.day-type-option {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  background: var(--card);
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  padding: 9px 16px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.day-type-option:hover {
+  border-color: var(--sun);
+  color: var(--ink);
+}
+
+.day-type-option-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}

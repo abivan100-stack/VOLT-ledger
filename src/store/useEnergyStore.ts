@@ -1,9 +1,15 @@
 import { create } from 'zustand'
 import { formatClock } from '../lib/format'
-import { integrateGenerationAndConsumption, nextCommunityRate, tickHousehold } from '../lib/simulation'
+import {
+  integrateGenerationAndConsumption,
+  nextCommunityRate,
+  tickHousehold,
+  type DayType,
+} from '../lib/simulation'
 import { appendBlock, validateChain, type ChainBlock } from '../lib/hashChain'
 
 export interface Household {
+  id: number
   name: string
   pv: number
   base: number
@@ -34,6 +40,7 @@ interface SimulationConfig {
 
 interface EnergyStoreState {
   config: SimulationConfig
+  dayType: DayType
   initialized: boolean
   running: boolean
   simMinute: number
@@ -56,6 +63,7 @@ interface EnergyStoreState {
   stop: () => void
   tick: () => void
   tryTrade: () => void
+  setDayType: (dayType: DayType) => void
   selectHouse: (index: number) => void
   closeDossier: () => void
   startEdit: (id: number) => void
@@ -67,7 +75,7 @@ interface EnergyStoreState {
 
 type HouseholdSeed = Omit<
   Household,
-  'out' | 'draw' | 'net' | 'gen' | 'con' | 'exp' | 'imp' | 'earned' | 'spent' | 'trades'
+  'id' | 'out' | 'draw' | 'net' | 'gen' | 'con' | 'exp' | 'imp' | 'earned' | 'spent' | 'trades'
 >
 
 // Ported verbatim from the original prototype's `this.houses` constructor data.
@@ -85,8 +93,9 @@ const RAW_HOUSEHOLDS: HouseholdSeed[] = [
 ]
 
 function createInitialHouseholds(): Household[] {
-  return RAW_HOUSEHOLDS.map((seed) => ({
+  return RAW_HOUSEHOLDS.map((seed, id) => ({
     ...seed,
+    id,
     out: 0,
     draw: 0,
     net: 0,
@@ -151,6 +160,7 @@ let restoredFlashTimeout: ReturnType<typeof setTimeout> | undefined
 
 export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
   config: { simSpeed: 4, startHour: 8, activity: 1 },
+  dayType: 'sunny-weekday',
   initialized: false,
   running: false,
   simMinute: 8 * 60,
@@ -213,13 +223,23 @@ export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
     }
   },
 
+  setDayType: (dayType: DayType) => {
+    const state = get()
+    const households = state.households.map((h) => {
+      const { out, draw, net } = tickHousehold(h.pv, h.base, h.id, state.simMinute, dayType)
+      const { gen, con } = integrateGenerationAndConsumption(h.pv, h.base, h.id, dayType, state.simMinute)
+      return { ...h, out, draw, net, gen, con }
+    })
+    set({ dayType, households })
+  },
+
   start: () => {
     const state = get()
     if (!state.initialized) {
       const startMinute = state.config.startHour * 60
       const withDailyStats = state.households.map((h) => ({
         ...h,
-        ...integrateGenerationAndConsumption(h.pv, h.base, startMinute),
+        ...integrateGenerationAndConsumption(h.pv, h.base, h.id, state.dayType, startMinute),
       }))
       const seeded = seedChain(withDailyStats, startMinute)
       set({
@@ -251,11 +271,12 @@ export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
 
   tick: () => {
     const state = get()
+    const dayType = state.dayType
     const prevMinute = state.simMinute
     let simMinute = prevMinute + 2 * state.config.simSpeed
     let rolled = false
-    if (simMinute > 18.5 * 60) {
-      simMinute = 9 * 60
+    if (simMinute >= 24 * 60) {
+      simMinute -= 24 * 60
       rolled = true
     }
     const dtHours = rolled ? 0 : (simMinute - prevMinute) / 60
@@ -263,7 +284,7 @@ export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
     let supply = 0
     let demand = 0
     let households = state.households.map((h) => {
-      const { out, draw, net } = tickHousehold(h.pv, h.base, h.ph, simMinute)
+      const { out, draw, net } = tickHousehold(h.pv, h.base, h.id, simMinute, dayType)
       supply += Math.max(0, net)
       demand += Math.max(0, -net)
       return { ...h, out, draw, net, gen: h.gen + out * dtHours, con: h.con + draw * dtHours }
@@ -279,7 +300,7 @@ export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
     if (rolled) {
       households = households.map((h) => ({
         ...h,
-        ...integrateGenerationAndConsumption(h.pv, h.base, simMinute),
+        ...integrateGenerationAndConsumption(h.pv, h.base, h.id, dayType, simMinute),
         exp: 0,
         imp: 0,
         earned: 0,
