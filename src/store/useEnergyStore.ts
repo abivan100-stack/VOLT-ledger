@@ -96,10 +96,12 @@ const SEED_PAIRS: Array<[number, number]> = [
 function seedChain(
   households: Household[],
   startMinute: number,
-): { households: Household[]; chain: ChainBlock[]; nextBlockId: number } {
+): { households: Household[]; chain: ChainBlock[]; nextBlockId: number; totalKwh: number; totalCredit: number } {
   let nextHouseholds = households
   let chain: ChainBlock[] = []
   let nextBlockId = 1
+  let totalKwh = 0
+  let totalCredit = 0
   for (let i = 0; i < SEED_OFFSETS_MINUTES.length; i++) {
     const [fromIndex, toIndex] = SEED_PAIRS[i]
     const from = nextHouseholds[fromIndex]
@@ -123,8 +125,10 @@ function seedChain(
     )
     chain = [...chain, block]
     nextBlockId += 1
+    totalKwh += kwh
+    totalCredit += credit
   }
-  return { households: nextHouseholds, chain, nextBlockId }
+  return { households: nextHouseholds, chain, nextBlockId, totalKwh, totalCredit }
 }
 
 let tickHandle: ReturnType<typeof setInterval> | undefined
@@ -159,6 +163,8 @@ export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
         households: seeded.households,
         chain: seeded.chain,
         nextBlockId: seeded.nextBlockId,
+        totalKwhToday: seeded.totalKwh,
+        totalCreditToday: seeded.totalCredit,
       })
     }
     if (!get().running) {
