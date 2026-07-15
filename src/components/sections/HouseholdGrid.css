@@ -1,0 +1,163 @@
+.household-grid-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.household-grid-title {
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.household-grid-title-sub {
+  color: var(--ink-soft);
+}
+
+.household-grid-legend {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.household-grid-legend-item {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.household-grid-legend-swatch {
+  width: 9px;
+  height: 9px;
+}
+
+.household-grid-legend-swatch-sun {
+  background: var(--sun);
+}
+
+.household-grid-legend-swatch-settle {
+  background: var(--settle);
+}
+
+.household-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(212px, 1fr));
+  gap: 14px;
+  margin-bottom: 96px;
+}
+
+.household-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  padding: 18px 18px 15px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.household-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 26px -18px rgba(23, 20, 15, 0.5);
+}
+
+.household-card-accent-exporting {
+  border-left: 3px solid var(--sun);
+}
+.household-card-accent-exporting .household-card-status,
+.household-card-accent-exporting .household-card-footer-arrow {
+  color: var(--sun);
+}
+
+.household-card-accent-importing {
+  border-left: 3px solid var(--settle);
+}
+.household-card-accent-importing .household-card-status,
+.household-card-accent-importing .household-card-footer-arrow {
+  color: var(--settle);
+}
+
+.household-card-accent-balanced {
+  border-left: 3px solid var(--rule-2);
+}
+.household-card-accent-balanced .household-card-status,
+.household-card-accent-balanced .household-card-footer-arrow {
+  color: var(--rule-2);
+}
+
+.household-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.household-card-meta {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+.household-card-status {
+  font-size: 9px;
+  letter-spacing: 0.13em;
+}
+
+.household-card-name {
+  font-size: 21px;
+  line-height: 1.05;
+  margin-bottom: 12px;
+}
+
+.household-card-balance {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 15px;
+  letter-spacing: -0.01em;
+}
+
+.household-card-flow {
+  border-top: 1px solid var(--rule);
+  padding-top: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.household-card-flow-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.household-card-flow-label {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+
+.household-card-flow-value {
+  font-size: 11.5px;
+}
+
+.household-card-footer {
+  border-top: 1px solid var(--rule);
+  margin-top: 12px;
+  padding-top: 9px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.household-card-footer-label {
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+}
+
+.household-card-footer-arrow {
+  font-size: 12px;
+}
