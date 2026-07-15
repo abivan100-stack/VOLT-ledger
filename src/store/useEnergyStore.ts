@@ -45,11 +45,14 @@ interface EnergyStoreState {
   rate: number
   prevRate: number
   rateHistory: number[]
+  selectedHouseIndex: number | null
 
   start: () => void
   stop: () => void
   tick: () => void
   tryTrade: () => void
+  selectHouse: (index: number) => void
+  closeDossier: () => void
 }
 
 type HouseholdSeed = Omit<
@@ -147,6 +150,10 @@ export const useEnergyStore = create<EnergyStoreState>((set, get) => ({
   rate: 5.5,
   prevRate: 5.5,
   rateHistory: new Array(44).fill(5.5),
+  selectedHouseIndex: null,
+
+  selectHouse: (index: number) => set({ selectedHouseIndex: index }),
+  closeDossier: () => set({ selectedHouseIndex: null }),
 
   start: () => {
     const state = get()

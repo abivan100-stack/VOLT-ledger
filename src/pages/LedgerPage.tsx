@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import Header from '../components/sections/Header'
 import LedgerIntro from '../components/sections/LedgerIntro'
 import StatsStrip from '../components/sections/StatsStrip'
+import NeighbourhoodMap from '../components/sections/NeighbourhoodMap'
 import Footer from '../components/sections/Footer'
 import { useScrollReveal } from '../components/ui/useScrollReveal'
 
@@ -16,6 +17,7 @@ function LedgerPage() {
         <div ref={containerRef} className="container pt-16 pb-32">
           <LedgerIntro />
           <StatsStrip />
+          <NeighbourhoodMap />
           <p className="eyebrow mb-3">Step C in progress</p>
           <p className="mono mt-3 text-sm text-ink-soft">
             Remaining sections migrate in one at a time.
