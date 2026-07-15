@@ -9,16 +9,16 @@ can quietly rewrite who owes whom.
 
 Built for the Open Energy Challenge 2026. All data is simulated — nothing real was billed.
 
-![Volt landing page](legacy/screenshots/volt-hero.png)
+![Volt landing page](screenshots/volt-hero.png)
 
 ---
 
 ## Status
 
-Migrating from a plain HTML/CSS/JS prototype into Vite + React + TypeScript, per
-`legacy/VOLT_BUILD_PLAN.md`. The original prototype is preserved under `legacy/` until
-the migration's parity check passes. The Volt landing page (`/`) is fully ported; the
-live ledger (`/ledger`) is in progress, section by section.
+Built with Vite + React + TypeScript. Started as a plain HTML/CSS/JS prototype
+(see `VOLT_BUILD_PLAN.md` for the phased build plan); that prototype has since
+been fully ported to this stack, verified section-by-section for parity, and
+retired.
 
 ## The idea in one number
 
@@ -64,12 +64,10 @@ It's the argument for a chain over a plain database, made tangible.
 
 | | |
 |---|---|
-| ![The hash chain](legacy/screenshots/ledger-chain.png) | ![Household dossier](legacy/screenshots/dossier.png) |
+| ![The hash chain](screenshots/ledger-chain.png) | ![Household dossier](screenshots/dossier.png) |
 | The tamper-evident chain | Per-household dossier |
-| ![Neighbourhood map](legacy/screenshots/map2d.png) | ![The street](legacy/screenshots/ledger-names.png) |
+| ![Neighbourhood map](screenshots/map2d.png) | ![The street](screenshots/ledger-names.png) |
 | Live neighbourhood map | Ten households, live |
-
-*(From the original prototype — the React port is a pixel-faithful rebuild in progress.)*
 
 ## Running it
 
@@ -95,7 +93,6 @@ The simulation's initial config (`store/useEnergyStore.ts`):
 - `src/components/ui/` — small reusable pieces.
 - `src/theme/` — `tokens.ts` (design tokens) + the one global stylesheet.
 - `src/pages/` — route-level composition (`/` and `/ledger`).
-- `legacy/` — the original Claude Design HTML/CSS/JS prototype and build plan, kept until migration parity is verified.
 
 ## Notes
 
