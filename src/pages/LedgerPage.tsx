@@ -6,6 +6,7 @@ import NeighbourhoodMap from '../components/sections/NeighbourhoodMap'
 import HouseholdGrid from '../components/sections/HouseholdGrid'
 import ChainLedger from '../components/sections/ChainLedger'
 import Footer from '../components/sections/Footer'
+import DossierDrawer from '../components/sections/DossierDrawer'
 import { useScrollReveal } from '../components/ui/useScrollReveal'
 
 function LedgerPage() {
@@ -25,6 +26,7 @@ function LedgerPage() {
         </div>
       </section>
       <Footer />
+      <DossierDrawer />
     </>
   )
 }

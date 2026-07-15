@@ -1,0 +1,379 @@
+@keyframes scrimIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sheetIn {
+  from { transform: translateX(102%); }
+  to { transform: translateX(0); }
+}
+
+.dossier-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.dossier-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(23, 20, 15, 0.5);
+  animation: scrimIn 0.2s ease;
+}
+
+.dossier-sheet {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100dvh;
+  width: min(472px, 94vw);
+  background: var(--paper);
+  border-left: 1px solid var(--rule-2);
+  box-shadow: -44px 0 90px -50px rgba(23, 20, 15, 0.75);
+  overflow-y: auto;
+  animation: sheetIn 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dossier-sheet-header {
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule-2);
+  padding: 22px 26px 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  z-index: 2;
+}
+
+.dossier-header-info {
+  min-width: 0;
+}
+
+.dossier-status-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 8px;
+}
+
+.dossier-status-dot {
+  width: 9px;
+  height: 9px;
+}
+
+.dossier-status-label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+
+.dossier-accent-exporting .dossier-status-dot,
+.dossier-accent-exporting .dossier-status-label {
+  color: var(--sun);
+}
+.dossier-accent-importing .dossier-status-dot,
+.dossier-accent-importing .dossier-status-label {
+  color: var(--settle);
+}
+.dossier-accent-balanced .dossier-status-dot,
+.dossier-accent-balanced .dossier-status-label {
+  color: var(--rule-2);
+}
+/* the dot has no visible foreground of its own, so `background: currentColor`
+   picks up whichever accent colour the rules above set on this element */
+.dossier-status-dot {
+  background: currentColor;
+}
+
+.dossier-name {
+  font-size: 31px;
+  line-height: 1;
+}
+
+.dossier-sub {
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin-top: 8px;
+}
+
+.dossier-close-button {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--rule-2);
+  background: var(--card);
+  color: var(--ink-soft);
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+  transition: border-color 0.15s, color 0.15s;
+}
+.dossier-close-button:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.dossier-body {
+  padding: 24px 26px 44px;
+}
+
+.dossier-section-label {
+  margin-bottom: 10px;
+}
+
+.dossier-section-label-tight {
+  margin-bottom: 12px;
+}
+
+.dossier-live-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 34px;
+}
+
+.dossier-live-cell {
+  border: 1px solid var(--rule);
+  background: var(--card);
+  padding: 14px 16px;
+}
+
+.dossier-live-label {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  margin-bottom: 9px;
+}
+
+.dossier-live-value {
+  font-size: 23px;
+  font-weight: 500;
+}
+
+.dossier-live-unit {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.dossier-net-sun {
+  color: var(--sun);
+}
+
+.dossier-net-settle {
+  color: var(--settle);
+}
+
+.dossier-activity-void {
+  color: var(--void);
+}
+
+.dossier-chart-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.dossier-chart-now {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+.dossier-chart-frame {
+  border: 1px solid var(--rule);
+  background: var(--card);
+  padding: 14px 12px 10px;
+}
+
+.dossier-chart-svg {
+  display: block;
+  overflow: visible;
+}
+
+.dossier-chart-axis-label {
+  font-family: 'Spline Sans Mono', monospace;
+  font-size: 7px;
+}
+
+.dossier-chart-legend {
+  display: flex;
+  gap: 18px;
+  margin-top: 6px;
+  padding: 0 4px;
+}
+
+.dossier-chart-legend-item {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dossier-chart-legend-swatch {
+  width: 11px;
+  height: 2px;
+}
+
+.dossier-chart-legend-swatch-sun {
+  background: var(--sun);
+}
+
+.dossier-chart-legend-swatch-settle {
+  background: var(--settle);
+}
+
+.dossier-day-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--rule);
+  background: var(--card);
+  margin: 14px 0 8px;
+}
+
+.dossier-day-stat {
+  padding: 12px 12px;
+  border-right: 1px solid var(--rule);
+}
+
+.dossier-day-stat-last {
+  border-right: none;
+}
+
+.dossier-day-stat-label {
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin-bottom: 7px;
+}
+
+.dossier-day-stat-value {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.dossier-day-stat-value-sun {
+  color: var(--sun);
+}
+
+.dossier-day-stat-value-settle {
+  color: var(--settle);
+}
+
+.dossier-day-stat-unit {
+  font-size: 8px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.dossier-self-note {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-bottom: 34px;
+}
+
+.dossier-specs {
+  border-top: 1px solid var(--rule);
+  margin-bottom: 34px;
+}
+
+.dossier-spec-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.dossier-spec-label {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+
+.dossier-spec-value {
+  font-size: 11.5px;
+  text-align: right;
+}
+
+.dossier-activity-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border: 1px solid var(--rule);
+  background: var(--card);
+  margin-bottom: 16px;
+}
+
+.dossier-activity-stat {
+  padding: 12px 14px;
+  border-right: 1px solid var(--rule);
+}
+
+.dossier-activity-stat-last {
+  border-right: none;
+}
+
+.dossier-activity-stat-label {
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin-bottom: 7px;
+}
+
+.dossier-activity-stat-value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dossier-activity-row {
+  display: grid;
+  grid-template-columns: 50px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 11.5px;
+}
+
+.dossier-activity-time {
+  color: var(--ink-soft);
+}
+
+.dossier-activity-desc {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dossier-activity-desc > span:first-child {
+  font-weight: 500;
+  font-family: Archivo, sans-serif;
+}
+
+.dossier-activity-arrow {
+  color: var(--ink-soft);
+}
+
+.dossier-activity-other {
+  font-family: Archivo, sans-serif;
+}
+
+.dossier-activity-amounts {
+  text-align: right;
+}
+
+.dossier-activity-kwh {
+  color: var(--ink-soft);
+}
+
+.dossier-no-activity {
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  padding: 8px 0;
+}
