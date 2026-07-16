@@ -1,0 +1,29 @@
+.carbon-counter {
+  border: 1px solid var(--rule-2);
+  background: var(--card);
+  padding: 22px 28px 24px;
+  margin-bottom: 80px;
+}
+
+.carbon-counter-label {
+  margin-bottom: 12px;
+}
+
+.carbon-counter-value {
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--settle);
+}
+
+.carbon-counter-unit {
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+.carbon-counter-caption {
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  margin-top: 12px;
+  letter-spacing: 0.04em;
+}
