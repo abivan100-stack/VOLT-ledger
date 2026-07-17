@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import Header from '../components/sections/Header'
 import LedgerIntro from '../components/sections/LedgerIntro'
+import AutonomyScore from '../components/sections/AutonomyScore'
 import DayTypeSelector from '../components/sections/DayTypeSelector'
 import StatsStrip from '../components/sections/StatsStrip'
 import CarbonCounter from '../components/sections/CarbonCounter'
@@ -22,6 +23,7 @@ function LedgerPage() {
       <section className="border-b border-rule-2">
         <div ref={containerRef} className="container pt-16 pb-32">
           <LedgerIntro />
+          <AutonomyScore />
           <DayTypeSelector />
           <StatsStrip />
           <CarbonCounter />

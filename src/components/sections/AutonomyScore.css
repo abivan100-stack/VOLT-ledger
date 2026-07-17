@@ -1,0 +1,38 @@
+.autonomy-score {
+  border-bottom: 1.5px solid var(--ink);
+  padding-bottom: 32px;
+  margin-bottom: 40px;
+}
+
+.autonomy-score-label {
+  margin-bottom: 12px;
+}
+
+.autonomy-score-value {
+  font-size: clamp(64px, 9vw, 112px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--settle);
+}
+
+.autonomy-score-unit {
+  font-size: 0.4em;
+  color: var(--ink-soft);
+  margin-left: 4px;
+}
+
+.autonomy-score-subtitle {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 56ch;
+  margin: 16px 0 0;
+}
+
+.autonomy-score-caption {
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  margin-top: 14px;
+}

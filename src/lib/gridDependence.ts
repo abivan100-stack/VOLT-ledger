@@ -127,3 +127,13 @@ export function dailyGridDependence(
 
   return breakdownFromEnergy(demand, selfSolar, localTrade, residualAfterTrade, totalBatteryKwh)
 }
+
+/**
+ * Neighbourhood autonomy: the share of demand met WITHOUT grid import —
+ * solar direct + battery + local trade. Always `100 - breakdown.gridPct`,
+ * read off the same breakdown Grid Dependence renders, so the two figures
+ * can never disagree.
+ */
+export function autonomyPct(breakdown: GridDependenceBreakdown): number {
+  return 100 - breakdown.gridPct
+}
