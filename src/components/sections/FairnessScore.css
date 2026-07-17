@@ -1,0 +1,120 @@
+.fairness-score {
+  border: 1px solid var(--rule-2);
+  background: var(--card);
+  padding: 22px 28px 26px;
+  margin-bottom: 80px;
+}
+
+.fairness-score-label {
+  margin-bottom: 10px;
+}
+
+.fairness-score-definition {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 62ch;
+  margin: 0 0 20px;
+}
+
+.fairness-score-summary {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 24px;
+}
+
+.fairness-score-stat-label {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+
+.fairness-score-stat-value {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.fairness-score-stat-caption {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+
+.fairness-score-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fairness-score-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 8px;
+  border-radius: 2px;
+}
+
+.fairness-score-row-best {
+  background: var(--paper-2);
+  box-shadow: inset 3px 0 0 var(--settle);
+}
+
+.fairness-score-row-worst {
+  background: var(--paper-2);
+  box-shadow: inset 3px 0 0 var(--void);
+}
+
+.fairness-score-row-name {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fairness-score-row-track {
+  position: relative;
+  height: 8px;
+  background: var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fairness-score-row-zero {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--ink-soft);
+}
+
+.fairness-score-row-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--bar-pct) * 1%);
+  transition: width 0.4s ease;
+}
+
+.fairness-score-row-bar-positive {
+  left: 50%;
+  background: var(--settle);
+}
+
+.fairness-score-row-bar-negative {
+  right: 50%;
+  background: var(--void);
+}
+
+.fairness-score-row-value {
+  font-size: 11px;
+  text-align: right;
+  color: var(--ink-soft);
+  min-width: 7ch;
+}

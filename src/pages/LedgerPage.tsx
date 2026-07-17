@@ -8,6 +8,7 @@ import CarbonCounter from '../components/sections/CarbonCounter'
 import GridDependenceMeter from '../components/sections/GridDependenceMeter'
 import NeighbourhoodMap from '../components/sections/NeighbourhoodMap'
 import HouseholdGrid from '../components/sections/HouseholdGrid'
+import FairnessScore from '../components/sections/FairnessScore'
 import ChainLedger from '../components/sections/ChainLedger'
 import Footer from '../components/sections/Footer'
 import DossierDrawer from '../components/sections/DossierDrawer'
@@ -30,6 +31,7 @@ function LedgerPage() {
           <GridDependenceMeter />
           <NeighbourhoodMap />
           <HouseholdGrid />
+          <FairnessScore />
           <ChainLedger />
         </div>
       </section>
