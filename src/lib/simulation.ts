@@ -49,12 +49,6 @@ export function solarCurve(hour: number, dayType: DayType): number {
 
 function demandShape(hour: number, dayType: DayType): number {
   switch (dayType) {
-    case 'cloudy': {
-      const morning = bump(hour, 7.5, 2.2)
-      const evening = bump(hour, 20, 2.6)
-      const dayBaseline = hour >= 6 && hour <= 22 ? 0.5 : 0.3
-      return dayBaseline + 0.25 * morning + 0.3 * evening
-    }
     case 'weekend': {
       const morning = bump(hour, 9, 2.4)
       const midday = bump(hour, 13.5, 3.0)

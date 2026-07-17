@@ -4,6 +4,7 @@ import LedgerIntro from '../components/sections/LedgerIntro'
 import DayTypeSelector from '../components/sections/DayTypeSelector'
 import StatsStrip from '../components/sections/StatsStrip'
 import CarbonCounter from '../components/sections/CarbonCounter'
+import GridDependenceMeter from '../components/sections/GridDependenceMeter'
 import NeighbourhoodMap from '../components/sections/NeighbourhoodMap'
 import HouseholdGrid from '../components/sections/HouseholdGrid'
 import ChainLedger from '../components/sections/ChainLedger'
@@ -24,6 +25,7 @@ function LedgerPage() {
           <DayTypeSelector />
           <StatsStrip />
           <CarbonCounter />
+          <GridDependenceMeter />
           <NeighbourhoodMap />
           <HouseholdGrid />
           <ChainLedger />

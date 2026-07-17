@@ -1,0 +1,84 @@
+.grid-dependence-meter {
+  border: 1px solid var(--rule-2);
+  background: var(--card);
+  padding: 22px 28px 24px;
+  margin-bottom: 80px;
+}
+
+.grid-dependence-label {
+  margin-bottom: 12px;
+}
+
+.grid-dependence-value {
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.grid-dependence-unit {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin-left: 4px;
+}
+
+.grid-dependence-bar {
+  display: flex;
+  width: 100%;
+  height: 10px;
+  margin-top: 16px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--rule);
+}
+
+.grid-dependence-segment {
+  height: 100%;
+  width: calc(var(--segment-pct) * 1%);
+  transition: width 0.4s ease;
+}
+
+.grid-dependence-segment-solar {
+  background: var(--sun);
+}
+
+.grid-dependence-segment-trade {
+  background: var(--settle);
+}
+
+.grid-dependence-segment-battery {
+  background: var(--ink);
+}
+
+.grid-dependence-segment-grid {
+  background: var(--ink-soft);
+}
+
+.grid-dependence-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.grid-dependence-legend-item {
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.grid-dependence-legend-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.grid-dependence-caption {
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  margin-top: 14px;
+  letter-spacing: 0.04em;
+}
