@@ -20,3 +20,7 @@ export function formatClock(minuteOfDay: number): string {
   const minutes = String(totalMinutes % 60).padStart(2, '0')
   return `${hours}:${minutes}`
 }
+
+export function shortHash(hash: string, length = 10): string {
+  return hash.slice(0, length)
+}

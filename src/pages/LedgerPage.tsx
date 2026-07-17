@@ -10,6 +10,7 @@ import NeighbourhoodMap from '../components/sections/NeighbourhoodMap'
 import HouseholdGrid from '../components/sections/HouseholdGrid'
 import FairnessScore from '../components/sections/FairnessScore'
 import ChainLedger from '../components/sections/ChainLedger'
+import ProofInspector from '../components/sections/ProofInspector'
 import Footer from '../components/sections/Footer'
 import DossierDrawer from '../components/sections/DossierDrawer'
 import { useScrollReveal } from '../components/ui/useScrollReveal'
@@ -33,6 +34,7 @@ function LedgerPage() {
           <HouseholdGrid />
           <FairnessScore />
           <ChainLedger />
+          <ProofInspector />
         </div>
       </section>
       <Footer />
