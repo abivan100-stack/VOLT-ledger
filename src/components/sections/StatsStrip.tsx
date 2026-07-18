@@ -37,7 +37,7 @@ function StatsStrip() {
           <span className="mono stats-rate-delta">{rateDeltaLabel} /kWh</span>
         </div>
         <svg width={SPARKLINE_WIDTH} height="24" viewBox={`0 0 ${SPARKLINE_WIDTH} 24`} className="stats-sparkline">
-          <polyline points={sparkPoints} fill="none" stroke="#B26A12" strokeWidth="1.25" />
+          <polyline points={sparkPoints} fill="none" className="stats-sparkline-line" strokeWidth="1.25" />
         </svg>
       </div>
       <div className="stats-cell stats-cell-clock">

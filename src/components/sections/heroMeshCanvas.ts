@@ -3,6 +3,7 @@
  * (Volt.dc.html). Pure canvas drawing/animation — touches the DOM directly,
  * which is why it lives next to Hero.tsx rather than in lib/.
  */
+import { readCssVar } from '../ui/cssVars'
 
 interface MeshNode {
   nx: number
@@ -47,6 +48,8 @@ export function startHeroMesh(canvas: HTMLCanvasElement, options: HeroMeshOption
   const ctx = canvas.getContext('2d')
   const wrap = canvas.parentElement
   if (!ctx || !wrap) return () => {}
+
+  const inkSoftColor = readCssVar('--ink-soft')
 
   let width = 0
   let height = 0
@@ -227,7 +230,7 @@ export function startHeroMesh(canvas: HTMLCanvasElement, options: HeroMeshOption
       drawHouse(p.x, p.y, 9, color, surplusIntensity, surplusIntensity > 0.5 ? AMBER : TEAL)
 
       ctx.font = '500 9px "Spline Sans Mono",monospace'
-      ctx.fillStyle = '#6B6454'
+      ctx.fillStyle = inkSoftColor
       ctx.fillText(n.name.toUpperCase(), p.x, p.y + 24)
 
       if (n.sur) {

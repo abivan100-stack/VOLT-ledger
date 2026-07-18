@@ -94,13 +94,13 @@ function DossierDrawer() {
                 strokeWidth="1"
                 strokeDasharray="2 3"
               />
-              <text x={dossier.ax6} y="126" textAnchor="middle" fill="#6B6454" className="dossier-chart-axis-label">
+              <text x={dossier.ax6} y="126" textAnchor="middle" className="dossier-chart-axis-label">
                 06:00
               </text>
-              <text x={dossier.ax12} y="126" textAnchor="middle" fill="#6B6454" className="dossier-chart-axis-label">
+              <text x={dossier.ax12} y="126" textAnchor="middle" className="dossier-chart-axis-label">
                 12:00
               </text>
-              <text x={dossier.ax18} y="126" textAnchor="middle" fill="#6B6454" className="dossier-chart-axis-label">
+              <text x={dossier.ax18} y="126" textAnchor="middle" className="dossier-chart-axis-label">
                 18:00
               </text>
             </svg>

@@ -47,6 +47,10 @@
   overflow: visible;
 }
 
+.stats-sparkline-line {
+  stroke: var(--sun);
+}
+
 .stats-value {
   font-size: 34px;
   font-weight: 500;

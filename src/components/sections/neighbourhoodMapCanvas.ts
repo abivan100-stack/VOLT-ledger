@@ -8,6 +8,7 @@
  * as-is rather than unified with the other canvas's approach.
  */
 import { useEnergyStore } from '../../store/useEnergyStore'
+import { readCssVar } from '../ui/cssVars'
 
 interface Point {
   x: number
@@ -44,6 +45,9 @@ export function startNeighbourhoodMap(
 ): NeighbourhoodMapHandle {
   const ctx = canvas.getContext('2d')
   if (!ctx) return { stop: () => {}, pick: () => -1 }
+
+  const inkSoftColor = readCssVar('--ink-soft')
+  const cardColor = readCssVar('--card')
 
   let width = 0
   let height = 0
@@ -114,7 +118,7 @@ export function startNeighbourhoodMap(
     if (busX1 + 82 < width) {
       ctx.textAlign = 'left'
       ctx.font = '500 8px "Spline Sans Mono",monospace'
-      ctx.fillStyle = '#6B6454'
+      ctx.fillStyle = inkSoftColor
       ctx.fillText('SHARED BUS', busX1 + 9, busY - 5)
     }
 
@@ -241,7 +245,7 @@ export function startNeighbourhoodMap(
         ctx.lineCap = 'butt'
       }
 
-      ctx.fillStyle = '#FCFAF3'
+      ctx.fillStyle = cardColor
       ctx.strokeStyle = `rgba(${INK},0.62)`
       ctx.lineWidth = 1.2
       ctx.beginPath()
@@ -280,7 +284,7 @@ export function startNeighbourhoodMap(
       const nameY = p.top ? p.y - gaugeRadius - 20 : p.y + gaugeRadius + 16
       const valueY = p.top ? p.y - gaugeRadius - 8 : p.y + gaugeRadius + 28
       ctx.font = '500 9.5px "Spline Sans Mono",monospace'
-      ctx.fillStyle = '#6B6454'
+      ctx.fillStyle = inkSoftColor
       ctx.fillText(h.name.split(' ')[0].toUpperCase(), cx, nameY)
       ctx.font = '600 9.5px "Spline Sans Mono",monospace'
       if (net > 0.12) {
@@ -290,7 +294,7 @@ export function startNeighbourhoodMap(
         ctx.fillStyle = `rgba(${TEAL},0.95)`
         ctx.fillText(`▼ ${Math.abs(net).toFixed(1)} kW`, cx, valueY)
       } else {
-        ctx.fillStyle = '#6B6454'
+        ctx.fillStyle = inkSoftColor
         ctx.fillText('— idle', cx, valueY)
       }
     }

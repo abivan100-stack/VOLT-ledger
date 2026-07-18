@@ -197,6 +197,7 @@
 .dossier-chart-axis-label {
   font-family: 'Spline Sans Mono', monospace;
   font-size: 7px;
+  fill: var(--ink-soft);
 }
 
 .dossier-chart-legend {
