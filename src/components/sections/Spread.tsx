@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { animate } from 'framer-motion'
 import type { CSSVars } from '../ui/cssVars'
 import { useScrollReveal } from '../ui/useScrollReveal'
+import { prefersReducedMotion } from '../ui/prefersReducedMotion'
 import './Spread.css'
 
 type SpreadMode = 'today' | 'volt'
@@ -12,10 +13,6 @@ const VOLT_TARGETS: Tween = { sell: 5.5, buy: 5.9 }
 const TWEEN_DURATION_SECONDS = 0.85
 const AUTO_SWITCH_DELAY_MS = 3600
 const cubicEaseOut = (t: number) => 1 - (1 - t) ** 3
-
-function prefersReducedMotion() {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
-}
 
 function Spread() {
   const containerRef = useRef<HTMLDivElement>(null)

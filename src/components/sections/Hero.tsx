@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useEnergyStore } from '../../store/useEnergyStore'
 import { scrollToId } from '../ui/scrollToId'
 import { useScrollReveal } from '../ui/useScrollReveal'
+import { prefersReducedMotion } from '../ui/prefersReducedMotion'
 import PrimaryLinkButton from '../ui/PrimaryLinkButton'
 import { startHeroMesh } from './heroMeshCanvas'
 import './Hero.css'
@@ -17,8 +18,7 @@ function Hero() {
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    return startHeroMesh(canvas, { activity, reducedMotion })
+    return startHeroMesh(canvas, { activity, reducedMotion: prefersReducedMotion() })
   }, [activity])
 
   return (

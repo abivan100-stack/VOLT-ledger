@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import type { MouseEvent, PointerEvent } from 'react'
 import { useEnergyStore } from '../../store/useEnergyStore'
 import { startNeighbourhoodMap } from './neighbourhoodMapCanvas'
+import { prefersReducedMotion } from '../ui/prefersReducedMotion'
 import './NeighbourhoodMap.css'
 
 function NeighbourhoodMap() {
@@ -12,8 +13,7 @@ function NeighbourhoodMap() {
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const handle = startNeighbourhoodMap(canvas, { reducedMotion })
+    const handle = startNeighbourhoodMap(canvas, { reducedMotion: prefersReducedMotion() })
     pickRef.current = handle.pick
     return handle.stop
   }, [])
