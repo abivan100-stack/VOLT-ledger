@@ -53,6 +53,10 @@
 }
 
 .household-card {
+  display: block;
+  width: 100%;
+  margin: 0;
+  text-align: left;
   position: relative;
   background: var(--card);
   border: 1px solid var(--rule);

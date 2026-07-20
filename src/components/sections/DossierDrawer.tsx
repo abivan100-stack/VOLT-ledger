@@ -29,7 +29,7 @@ function DossierDrawer() {
 
   return (
     <div className="dossier-overlay">
-      <div onClick={closeDossier} className="dossier-scrim" />
+      <button type="button" onClick={closeDossier} aria-label="Close dossier" className="dossier-scrim" />
       <div className="dossier-sheet">
         <div className="dossier-sheet-header">
           <div className="dossier-header-info">

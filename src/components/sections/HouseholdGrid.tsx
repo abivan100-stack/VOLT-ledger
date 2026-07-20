@@ -41,8 +41,9 @@ function HouseholdGrid() {
         {households.map((household, index) => {
           const status = statusFor(household.net)
           return (
-            <div
+            <button
               key={household.name}
+              type="button"
               onClick={() => selectHouse(index)}
               title="Open dossier"
               className={`household-card ${accentClassFor(status)}`}
@@ -69,7 +70,7 @@ function HouseholdGrid() {
                 <span className="mono household-card-footer-label">OPEN DOSSIER</span>
                 <span className="mono household-card-footer-arrow">↗</span>
               </div>
-            </div>
+            </button>
           )
         })}
       </div>
