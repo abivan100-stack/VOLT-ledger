@@ -14,7 +14,6 @@ export interface Household {
   pv: number
   base: number
   balance: number
-  ph: number
   orient: string
   tilt: number
   batt: number
@@ -80,16 +79,16 @@ type HouseholdSeed = Omit<
 
 // Ported verbatim from the original prototype's `this.houses` constructor data.
 const RAW_HOUSEHOLDS: HouseholdSeed[] = [
-  { name: 'Nikil Sundaram', pv: 4.2, base: 0.6, balance: 1240.4, ph: 0.3, orient: 'South-south-west', tilt: 12, batt: 5.0, since: '2021', meter: 'NB-0417' },
-  { name: 'Prem Ramesh', pv: 3.0, base: 0.5, balance: 312.75, ph: 1.7, orient: 'South', tilt: 10, batt: 0, since: '2022', meter: 'NB-1183' },
-  { name: 'Pranav P', pv: 5.4, base: 0.9, balance: 2105.1, ph: 2.9, orient: 'South', tilt: 15, batt: 10.0, since: '2020', meter: 'NB-0952' },
-  { name: 'Vijay', pv: 0, base: 0.7, balance: -484.2, ph: 4.1, orient: '—', tilt: 0, batt: 0, since: '—', meter: 'NB-2261' },
-  { name: 'Karthik Iyer', pv: 2.2, base: 0.4, balance: 96.3, ph: 5.3, orient: 'West', tilt: 12, batt: 0, since: '2023', meter: 'NB-1546' },
-  { name: 'Deepak Krishnan', pv: 3.6, base: 1.1, balance: -152.6, ph: 0.9, orient: 'South-east', tilt: 10, batt: 5.0, since: '2021', meter: 'NB-0788' },
-  { name: 'Sanjay Murugan', pv: 4.8, base: 0.8, balance: 878.05, ph: 2.2, orient: 'South', tilt: 14, batt: 7.5, since: '2022', meter: 'NB-0333' },
-  { name: 'Rahul Natarajan', pv: 0, base: 0.9, balance: -691.4, ph: 3.4, orient: '—', tilt: 0, batt: 0, since: '—', meter: 'NB-2490' },
-  { name: 'Aravind Chandran', pv: 2.8, base: 0.5, balance: 204.15, ph: 5.9, orient: 'South-south-east', tilt: 11, batt: 0, since: '2023', meter: 'NB-1902' },
-  { name: 'Surya Selvaraj', pv: 3.9, base: 1.0, balance: -58.9, ph: 1.1, orient: 'South-west', tilt: 13, batt: 5.0, since: '2022', meter: 'NB-0641' },
+  { name: 'Nikil Sundaram', pv: 4.2, base: 0.6, balance: 1240.4, orient: 'South-south-west', tilt: 12, batt: 5.0, since: '2021', meter: 'NB-0417' },
+  { name: 'Prem Ramesh', pv: 3.0, base: 0.5, balance: 312.75, orient: 'South', tilt: 10, batt: 0, since: '2022', meter: 'NB-1183' },
+  { name: 'Pranav P', pv: 5.4, base: 0.9, balance: 2105.1, orient: 'South', tilt: 15, batt: 10.0, since: '2020', meter: 'NB-0952' },
+  { name: 'Vijay', pv: 0, base: 0.7, balance: -484.2, orient: '—', tilt: 0, batt: 0, since: '—', meter: 'NB-2261' },
+  { name: 'Karthik Iyer', pv: 2.2, base: 0.4, balance: 96.3, orient: 'West', tilt: 12, batt: 0, since: '2023', meter: 'NB-1546' },
+  { name: 'Deepak Krishnan', pv: 3.6, base: 1.1, balance: -152.6, orient: 'South-east', tilt: 10, batt: 5.0, since: '2021', meter: 'NB-0788' },
+  { name: 'Sanjay Murugan', pv: 4.8, base: 0.8, balance: 878.05, orient: 'South', tilt: 14, batt: 7.5, since: '2022', meter: 'NB-0333' },
+  { name: 'Rahul Natarajan', pv: 0, base: 0.9, balance: -691.4, orient: '—', tilt: 0, batt: 0, since: '—', meter: 'NB-2490' },
+  { name: 'Aravind Chandran', pv: 2.8, base: 0.5, balance: 204.15, orient: 'South-south-east', tilt: 11, batt: 0, since: '2023', meter: 'NB-1902' },
+  { name: 'Surya Selvaraj', pv: 3.9, base: 1.0, balance: -58.9, orient: 'South-west', tilt: 13, batt: 5.0, since: '2022', meter: 'NB-0641' },
 ]
 
 function createInitialHouseholds(): Household[] {

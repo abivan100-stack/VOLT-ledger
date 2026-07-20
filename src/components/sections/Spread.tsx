@@ -1,92 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
-import { animate } from 'framer-motion'
+import { useRef } from 'react'
 import type { CSSVars } from '../ui/cssVars'
 import { useScrollReveal } from '../ui/useScrollReveal'
-import { prefersReducedMotion } from '../ui/prefersReducedMotion'
+import { useSpreadTween } from './useSpreadTween'
 import './Spread.css'
-
-type SpreadMode = 'today' | 'volt'
-type Tween = { sell: number; buy: number }
-
-const TODAY_TARGETS: Tween = { sell: 3.0, buy: 8.0 }
-const VOLT_TARGETS: Tween = { sell: 5.5, buy: 5.9 }
-const TWEEN_DURATION_SECONDS = 0.85
-const AUTO_SWITCH_DELAY_MS = 3600
-const cubicEaseOut = (t: number) => 1 - (1 - t) ** 3
 
 function Spread() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [spreadMode, setSpreadMode] = useState<SpreadMode>('today')
-  const [tween, setTweenState] = useState<Tween>({ sell: 0, buy: 0 })
-  const tweenRef = useRef<Tween>(tween)
-  const stopTweenRef = useRef<() => void>(() => {})
-  const spreadSeenRef = useRef(false)
-  const userToggledRef = useRef(false)
-  const autoSwitchTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-
   useScrollReveal(containerRef, 0.12)
-
-  function setTween(next: Tween) {
-    tweenRef.current = next
-    setTweenState(next)
-  }
-
-  function runTween(target: Tween, reducedMotion: boolean) {
-    stopTweenRef.current()
-    const from = tweenRef.current
-    if (reducedMotion) {
-      setTween(target)
-      return
-    }
-    const controls = animate(0, 1, {
-      duration: TWEEN_DURATION_SECONDS,
-      ease: cubicEaseOut,
-      onUpdate: (progress) => {
-        setTween({
-          sell: from.sell + (target.sell - from.sell) * progress,
-          buy: from.buy + (target.buy - from.buy) * progress,
-        })
-      },
-    })
-    stopTweenRef.current = () => controls.stop()
-  }
-
-  function setMode(mode: SpreadMode, isUserAction: boolean) {
-    if (isUserAction) {
-      userToggledRef.current = true
-      clearTimeout(autoSwitchTimeoutRef.current)
-    }
-    setSpreadMode(mode)
-    runTween(mode === 'today' ? TODAY_TARGETS : VOLT_TARGETS, prefersReducedMotion())
-  }
-
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const observer = new IntersectionObserver((entries) => {
-      const entry = entries[0]
-      if (entry?.isIntersecting && !spreadSeenRef.current) {
-        spreadSeenRef.current = true
-        const reducedMotion = prefersReducedMotion()
-        runTween(TODAY_TARGETS, reducedMotion)
-        if (!reducedMotion) {
-          autoSwitchTimeoutRef.current = setTimeout(() => {
-            if (!userToggledRef.current) setMode('volt', false)
-          }, AUTO_SWITCH_DELAY_MS)
-        }
-        observer.disconnect()
-      }
-    }, { threshold: 0.35 })
-
-    observer.observe(container)
-    return () => {
-      observer.disconnect()
-      clearTimeout(autoSwitchTimeoutRef.current)
-      stopTweenRef.current()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { mode: spreadMode, tween, setMode } = useSpreadTween(containerRef)
 
   const sellPct = Math.max(0, (tween.sell / 8) * 100)
   const buyPct = Math.max(0, (tween.buy / 8) * 100)

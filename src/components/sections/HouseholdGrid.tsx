@@ -1,14 +1,7 @@
 import { useEnergyStore } from '../../store/useEnergyStore'
 import { formatMoney } from '../../lib/format'
+import { statusForNet, type HouseholdStatus } from '../../lib/householdStatus'
 import './HouseholdGrid.css'
-
-type HouseholdStatus = 'EXPORTING' | 'IMPORTING' | 'BALANCED'
-
-function statusFor(net: number): HouseholdStatus {
-  if (net > 0.15) return 'EXPORTING'
-  if (net < -0.15) return 'IMPORTING'
-  return 'BALANCED'
-}
 
 function accentClassFor(status: HouseholdStatus): string {
   if (status === 'EXPORTING') return 'household-card-accent-exporting'
@@ -39,7 +32,7 @@ function HouseholdGrid() {
       </div>
       <div data-reveal className="household-grid">
         {households.map((household, index) => {
-          const status = statusFor(household.net)
+          const status = statusForNet(household.net)
           return (
             <button
               key={household.name}

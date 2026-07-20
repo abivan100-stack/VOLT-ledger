@@ -1,6 +1,7 @@
 import { solarCurve, demandCurve, type DayType } from './simulation'
 import { formatClock, formatMoney } from './format'
 import type { ChainBlock } from './hashChain'
+import { statusForNet, type HouseholdStatus } from './householdStatus'
 
 /**
  * Takes only the fields it actually needs (a structural subset of Household)
@@ -29,8 +30,6 @@ export interface DossierHouseholdInput {
   trades: number
 }
 
-export type DossierStatus = 'EXPORTING' | 'IMPORTING' | 'BALANCED'
-
 export interface DossierSpec {
   label: string
   value: string
@@ -49,7 +48,7 @@ export interface DossierActivity {
 
 export interface DossierViewModel {
   name: string
-  status: DossierStatus
+  status: HouseholdStatus
   sub: string
   out: string
   draw: string
@@ -91,7 +90,7 @@ export function buildDossier(
   dayType: DayType,
 ): DossierViewModel {
   const netValue = household.out - household.draw
-  const status: DossierStatus = netValue > 0.15 ? 'EXPORTING' : netValue < -0.15 ? 'IMPORTING' : 'BALANCED'
+  const status = statusForNet(netValue)
 
   const panelCount = household.pv > 0 ? Math.round(household.pv / 0.4) : 0
   const arrayArea = panelCount ? `${(panelCount * 1.9).toFixed(0)} m²` : '—'
