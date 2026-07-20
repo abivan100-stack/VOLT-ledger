@@ -1,4 +1,6 @@
 import { useEnergyStore } from '../../store/useEnergyStore'
+import { chainStatusFor } from '../../lib/chainStatus'
+import ChainLedgerRow from './ChainLedgerRow'
 import './ChainLedger.css'
 
 function ChainLedger() {
@@ -16,19 +18,13 @@ function ChainLedger() {
 
   const rows = chain.slice(-10).reverse()
 
-  let statusText: string
-  let statusVariant: 'compromised' | 'restored' | 'verified'
-  if (compromised) {
-    statusVariant = 'compromised'
-    statusText = `SEAL BROKEN — ${invalidCount} ENTR${invalidCount === 1 ? 'Y' : 'IES'} VOID · SETTLEMENT HALTED`
-  } else if (restoredFlash) {
-    statusVariant = 'restored'
-    statusText = `LEDGER RE-SEALED — ALL ${chain.length} ENTRIES VERIFIED`
-  } else {
-    const head = chain.length ? chain[chain.length - 1].hash.slice(0, 10) : '··········'
-    statusVariant = 'verified'
-    statusText = `CHAIN VERIFIED — ${chain.length} ENTRIES · HEAD ${head}`
-  }
+  const status = chainStatusFor({
+    compromised,
+    restoredFlash,
+    invalidCount,
+    chainLength: chain.length,
+    headHash: chain.length ? chain[chain.length - 1].hash : null,
+  })
 
   return (
     <div className="chain-block">
@@ -42,10 +38,10 @@ function ChainLedger() {
       {compromised && <div className="chain-void-stamp">INTEGRITY VOID</div>}
 
       <div data-reveal className="chain-card">
-        <div className={`chain-status chain-status-${statusVariant}`}>
+        <div className={`chain-status chain-status-${status.variant}`}>
           <div className="mono chain-status-text">
             <span className="chain-status-dot" />
-            {statusText}
+            {status.text}
           </div>
           {compromised && (
             <button type="button" onClick={restoreChain} className="mono chain-reseal-button">
@@ -60,50 +56,18 @@ function ChainLedger() {
           <span className="chain-col-right">CREDIT</span>
           <span className="chain-col-right">SEAL</span>
         </div>
-        {rows.map((block) => {
-          const isEditing = editingBlockId === block.id
-          return (
-            <div key={block.id} className={`mono chain-row${block.invalid ? ' chain-row-invalid' : ''}`}>
-              <span className="chain-row-time">{block.payload.t}</span>
-              <span className="chain-row-parties">
-                {block.payload.from} <span className="chain-row-arrow">→</span> {block.payload.to}
-              </span>
-              {isEditing ? (
-                <input
-                  value={editValue}
-                  onChange={(event) => setEditValue(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') event.currentTarget.blur()
-                    if (event.key === 'Escape') cancelEdit()
-                  }}
-                  onBlur={commitEdit}
-                  autoFocus
-                  className="mono chain-row-edit-input"
-                />
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => startEdit(block.id)}
-                  title="Tamper: edit this figure"
-                  className="mono chain-row-kwh-button"
-                >
-                  {block.payload.kwh.toFixed(2)}
-                </button>
-              )}
-              <span className="chain-row-credit">+₹{block.payload.credit.toFixed(2)}</span>
-              <span className="chain-row-seal">
-                {block.invalid ? (
-                  <>
-                    <span className="chain-void-badge">VOID</span>
-                    <span className="chain-row-calc">{(block.calc || '').slice(0, 10)}</span>
-                  </>
-                ) : (
-                  <span className="chain-row-hash">{block.hash.slice(0, 10)}</span>
-                )}
-              </span>
-            </div>
-          )
-        })}
+        {rows.map((block) => (
+          <ChainLedgerRow
+            key={block.id}
+            block={block}
+            isEditing={editingBlockId === block.id}
+            editValue={editValue}
+            onStartEdit={startEdit}
+            onEditValueChange={setEditValue}
+            onCommitEdit={commitEdit}
+            onCancelEdit={cancelEdit}
+          />
+        ))}
       </div>
       <div className="mono chain-footnote">
         EACH SEAL = SHA-256( PREVIOUS SEAL + ENTRY PAYLOAD ). ALTER ONE FIGURE AND EVERY ENTRY DOWNSTREAM FAILS

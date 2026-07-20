@@ -9,12 +9,6 @@
   to { opacity: 1; transform: none; }
 }
 
-@keyframes txIn {
-  0% { opacity: 0; transform: translateY(-10px); background-color: rgba(178, 106, 18, 0.14); }
-  55% { background-color: rgba(178, 106, 18, 0.12); }
-  100% { opacity: 1; transform: none; background-color: transparent; }
-}
-
 .chain-block {
   position: relative;
 }
@@ -135,14 +129,13 @@
   transform: translateY(1px);
 }
 
-.chain-columns,
-.chain-row {
+/* Column widths must stay identical to ChainLedgerRow.css's .chain-row —
+   the two are visually one table, split across two files only because the
+   row became its own component. */
+.chain-columns {
   display: grid;
   grid-template-columns: 64px 1fr 96px 118px 152px;
   gap: 16px;
-}
-
-.chain-columns {
   padding: 12px 22px;
   border-bottom: 1px solid var(--rule-2);
   font-size: 9px;
@@ -152,115 +145,6 @@
 
 .chain-col-right {
   text-align: right;
-}
-
-.chain-row {
-  align-items: center;
-  padding: 0 22px;
-  height: 50px;
-  border-bottom: 1px solid var(--rule);
-  border-left: 3px solid transparent;
-  background: transparent;
-  font-size: 13px;
-  transition: background 0.15s, border-color 0.15s, color 0.3s;
-  animation: txIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.chain-row:hover {
-  background: var(--paper-2);
-  border-left-color: var(--sun);
-}
-
-.chain-row-invalid {
-  border-left-color: var(--void);
-  background: rgba(163, 30, 23, 0.05);
-}
-
-.chain-row-time {
-  color: var(--ink-soft);
-}
-
-.chain-row-parties {
-  color: var(--ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: Archivo, sans-serif;
-  font-weight: 500;
-  font-size: 13.5px;
-}
-.chain-row-invalid .chain-row-parties {
-  color: var(--void);
-}
-
-.chain-row-arrow {
-  color: var(--ink-soft);
-}
-
-.chain-row-edit-input {
-  width: 100%;
-  box-sizing: border-box;
-  background: var(--paper);
-  border: 1.5px solid var(--sun);
-  border-radius: 2px;
-  color: var(--sun);
-  font-size: 13px;
-  padding: 4px 6px;
-  text-align: right;
-  outline: none;
-}
-
-.chain-row-kwh-button {
-  background: none;
-  border: none;
-  padding: 2px 0;
-  cursor: text;
-  color: var(--ink);
-  font-size: 13px;
-  text-align: right;
-  border-bottom: 1px dashed transparent;
-  transition: border-color 0.15s;
-}
-.chain-row-kwh-button:hover {
-  border-bottom-color: var(--ink-soft);
-}
-.chain-row-invalid .chain-row-kwh-button {
-  color: var(--void);
-  border-bottom-color: var(--void);
-}
-
-.chain-row-credit {
-  color: var(--settle);
-  text-align: right;
-}
-.chain-row-invalid .chain-row-credit {
-  color: var(--void);
-}
-
-.chain-row-seal {
-  text-align: right;
-  line-height: 1.25;
-}
-
-.chain-void-badge {
-  display: inline-block;
-  border: 1px solid var(--void);
-  color: var(--void);
-  font-size: 8.5px;
-  letter-spacing: 0.14em;
-  padding: 1px 5px;
-  transform: rotate(-3deg);
-  margin-bottom: 2px;
-}
-
-.chain-row-calc {
-  display: block;
-  color: var(--void);
-  font-size: 11px;
-}
-
-.chain-row-hash {
-  color: var(--ink-soft);
-  font-size: 11.5px;
 }
 
 .chain-footnote {
