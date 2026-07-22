@@ -62,6 +62,15 @@
   box-shadow: 0 34px 70px -46px rgba(23, 20, 15, 0.42);
 }
 
+/* The table's columns are fixed-width so hashes stay legible — below that
+   width, scroll the table itself instead of letting it overflow the page.
+   Scoped to just the header+rows (not .chain-status) so the SEAL BROKEN /
+   CHAIN VERIFIED banner always stays visible without needing to scroll. */
+.chain-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .chain-status {
   border-bottom: 1px solid var(--rule-2);
   padding: 14px 22px;

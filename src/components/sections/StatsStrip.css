@@ -68,3 +68,21 @@
   font-size: 15px;
   color: var(--ink-soft);
 }
+
+@media (max-width: 640px) {
+  .stats-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-cell-rate,
+  .stats-cell-clock,
+  .stats-cell-settled {
+    padding: 18px 0;
+    border-left: none;
+    border-top: 1px solid var(--rule-2);
+  }
+
+  .stats-cell-rate {
+    border-top: none;
+  }
+}

@@ -49,25 +49,27 @@ function ChainLedger() {
             </button>
           )}
         </div>
-        <div className="mono chain-columns">
-          <span>TIME</span>
-          <span>FROM → TO</span>
-          <span className="chain-col-right">kWh</span>
-          <span className="chain-col-right">CREDIT</span>
-          <span className="chain-col-right">SEAL</span>
+        <div className="chain-table-scroll">
+          <div className="mono chain-columns">
+            <span>TIME</span>
+            <span>FROM → TO</span>
+            <span className="chain-col-right">kWh</span>
+            <span className="chain-col-right">CREDIT</span>
+            <span className="chain-col-right">SEAL</span>
+          </div>
+          {rows.map((block) => (
+            <ChainLedgerRow
+              key={block.id}
+              block={block}
+              isEditing={editingBlockId === block.id}
+              editValue={editValue}
+              onStartEdit={startEdit}
+              onEditValueChange={setEditValue}
+              onCommitEdit={commitEdit}
+              onCancelEdit={cancelEdit}
+            />
+          ))}
         </div>
-        {rows.map((block) => (
-          <ChainLedgerRow
-            key={block.id}
-            block={block}
-            isEditing={editingBlockId === block.id}
-            editValue={editValue}
-            onStartEdit={startEdit}
-            onEditValueChange={setEditValue}
-            onCommitEdit={commitEdit}
-            onCancelEdit={cancelEdit}
-          />
-        ))}
       </div>
       <div className="mono chain-footnote">
         EACH SEAL = SHA-256( PREVIOUS SEAL + ENTRY PAYLOAD ). ALTER ONE FIGURE AND EVERY ENTRY DOWNSTREAM FAILS
